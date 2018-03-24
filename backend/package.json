@@ -1,0 +1,16 @@
+{
+  "name": "fellowsRdBackend",
+  "version": "1.0.0",
+  "main": "handler.js",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "babel src --out-dir build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.213.1",
+    "babel-cli": "^6.26.0",
+    "uuid": "^3.2.1"
+  }
+}

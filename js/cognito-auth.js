@@ -121,7 +121,7 @@ var FellowsRd = window.FellowsRd || {};
         signin(email, password,
             function signinSuccess() {
                 console.log('Successfully Logged In');
-                window.location.href = 'bookings.html';
+                window.location.href = 'booking.html';
             },
             function signinError(err) {
                 alert(err);
