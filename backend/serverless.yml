@@ -21,6 +21,14 @@ provider:
   name: aws
   runtime: nodejs6.10
   region: ap-southeast-2
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - dynamodb:CreateTable
+        - dynamodb:PutItem
+        - dynamodb:BatchWriteItem
+      Resource:
+        - arn:aws:dynamodb:ap-southeast-2:321659899380:table/FellowsRdBookings
 
 
 # you can add statements to the Lambda function's IAM Role here
@@ -55,10 +63,16 @@ provider:
 functions:
   createBooking:
     handler: handler.createBooking
-  events:
-    - http:
-      path: booking/create
-      method: POST
+    events:
+      - http:
+        path: booking/create
+        method: POST
+  getBookings:
+    handler: handler.getBookings
+    events:
+      - http:
+        path: booking/get
+        method: POST
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
