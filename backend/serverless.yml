@@ -65,14 +65,14 @@ functions:
     handler: handler.createBooking
     events:
       - http:
-        path: booking/create
-        method: POST
+          path: booking/create
+          method: POST
   getBookings:
     handler: handler.getBookings
     events:
       - http:
-        path: booking/get
-        method: POST
+          path: booking/get
+          method: POST
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events

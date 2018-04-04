@@ -1,6 +1,6 @@
 import uuid from 'uuid/v5';
 
-function getBookings(username, bookingData, ddb) {
+function getBookings(bookingData, ddb) {
   let bookings = [];
   let date = new Date(bookingData.startDate);
   while (date < Date(bookingData.endDate)) {
