@@ -6,7 +6,9 @@
   "private": true,
   "scripts": {
     "build": "babel src --out-dir build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "publish": "aws s3 sync frontend/ s3://fellowsrd.com/ --profile serverless_personal",
+    "deploy": "sls deploy"
   },
   "dependencies": {
     "aws-sdk": "^2.213.1",
