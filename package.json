@@ -13,11 +13,14 @@
   "dependencies": {
     "aws-sdk": "^2.213.1",
     "babel-cli": "^6.26.0",
+    "bulma": "^0.7.1",
     "date-fns": "^1.29.0",
     "parcel-bundler": "^1.7.1",
     "react": "^16.3.2",
-    "react-calendar": "^2.14.0",
     "react-dom": "^16.3.2",
+    "react-modal-login": "^1.2.1",
+    "react-slideshow-image": "^0.2.2",
+    "react-yearly-calendar": "^1.2.1",
     "uuid": "^3.2.1"
   }
 }
