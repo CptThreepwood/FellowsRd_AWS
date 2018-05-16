@@ -11,37 +11,19 @@ var shuffle = function(array) {
   return temp;
 };
 
-const opening_image = process.env.PUBLIC_URL + '/IMG_5049.jpg';
+const opening_image = '/IMG_5049.jpg';
 
 let images = shuffle([
-  process.env.PUBLIC_URL + '/IMG_5060.jpg',
-  process.env.PUBLIC_URL + '/IMG_5061.jpg',
-  process.env.PUBLIC_URL + '/IMG_5063.jpg',
-  process.env.PUBLIC_URL + '/IMG_5065.jpg',
-  process.env.PUBLIC_URL + '/IMG_5068.jpg',
-  process.env.PUBLIC_URL + '/IMG_5079.jpg',
-  process.env.PUBLIC_URL + '/IMG_5098.jpg',
-  process.env.PUBLIC_URL + '/IMG_5107.jpg',
-  process.env.PUBLIC_URL + '/IMG_5109.jpg',
-  process.env.PUBLIC_URL + '/IMG_5114.jpg',
-  process.env.PUBLIC_URL + '/IMG_5123.jpg',
-  process.env.PUBLIC_URL + '/IMG_5133.jpg',
-  process.env.PUBLIC_URL + '/IMG_5136.jpg',
-  process.env.PUBLIC_URL + '/IMG_5139.jpg',
-  process.env.PUBLIC_URL + '/IMG_5144.jpg',
-  // process.env.PUBLIC_URL + '/IMG_5053.jpg',
-  // process.env.PUBLIC_URL + '/IMG_5073.jpg',
-  // process.env.PUBLIC_URL + '/IMG_5078.jpg',
-  // process.env.PUBLIC_URL + '/IMG_5093.jpg',
-  // process.env.PUBLIC_URL + '/IMG_5142.jpg',
-  // process.env.PUBLIC_URL + '/IMG_5145.jpg',
-  // process.env.PUBLIC_URL + '/IMG_5146.jpg',
-  // process.env.PUBLIC_URL + '/IMG_5148.jpg',
-  // process.env.PUBLIC_URL + '/IMG_5158.jpg',
-  // process.env.PUBLIC_URL + '/IMG_5162.jpg',
-  // process.env.PUBLIC_URL + '/IMG_5169.jpg',
-  // process.env.PUBLIC_URL + '/IMG_5170.jpg'
+  '/IMG_5060.jpg', '/IMG_5061.jpg', '/IMG_5063.jpg',
+  '/IMG_5065.jpg', '/IMG_5068.jpg', '/IMG_5079.jpg',
+  '/IMG_5098.jpg', '/IMG_5107.jpg', '/IMG_5109.jpg',
+  '/IMG_5114.jpg', '/IMG_5123.jpg', '/IMG_5133.jpg',
+  '/IMG_5136.jpg', '/IMG_5139.jpg', '/IMG_5144.jpg',
 ]);
+
+const lowest = '/960_600_photos';
+const medium = '/1440_900_photos';
+const highest = '/1920_1200_photos';
 
 const image_style = {
   maxWidth: '100%',
@@ -68,10 +50,26 @@ export default class extends React.Component {
 
     return (
       <Slider {...settings}>
-        <div> <img src={opening_image} style={image_style} /> </div>
+        {(window.innerWidth > 1440) ? (
+          <div> <img src={process.env.PUBLIC_URL + highest + opening_image} style={image_style} /> </div>
+        ) : ( (window.innerWidth > 1200) ? (
+            <div> <img src={process.env.PUBLIC_URL + medium + opening_image} style={image_style} /> </div>
+          ) : (
+            <div> <img src={process.env.PUBLIC_URL + lowest + opening_image} style={image_style} /> </div>
+          )
+        )}
         {
           images.map(
-            url => <div> <img src={url} style={image_style} /> </div>
+            url => {return(
+              (window.innerWidth > 1440) ? (
+                <div> <img src={process.env.PUBLIC_URL + highest + url} style={image_style} /> </div>
+              ) : ( (window.innerWidth > 1200) ? (
+                  <div> <img src={process.env.PUBLIC_URL + medium + url} style={image_style} /> </div>
+                ) : (
+                  <div> <img src={process.env.PUBLIC_URL + lowest + url} style={image_style} /> </div>
+                )
+              )
+            )}
           )
         }
       </Slider>
