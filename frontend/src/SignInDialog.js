@@ -8,10 +8,16 @@ import AccountCircle from 'material-ui/svg-icons/action/account-circle';
 
 
 const floating_style = {
-  margin: 12,
+  width: '110px',
+  marginLeft: '-55px',
   zIndex: 1,
   position: 'fixed',
   marginTop: '70vh',
+};
+
+const customContentStyle = {
+  width: '25%',
+  maxWidth: '25%',
 };
 
 export default class SignInDialog extends React.Component {
@@ -53,9 +59,10 @@ export default class SignInDialog extends React.Component {
           onClick={this.handleOpen}
         />
         <Dialog
-          title="Dialog With Actions"
+          title="Sign In"
           actions={actions}
           modal={false}
+          contentStyle={customContentStyle}
           open={this.state.open}
           onRequestClose={this.handleClose}
         >
