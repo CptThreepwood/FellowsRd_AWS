@@ -1,7 +1,6 @@
 import BookingCalendar from './Calendar.js'
 import SplashSlides from './SplashSlides.js'
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 
 class App extends Component {
