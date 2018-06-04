@@ -36,6 +36,32 @@ const customContentStyle = {
 //   );
 // }
 
+let userPool = new CognitoUserPool({
+  UserPoolId: config.cognito.userPoolId,
+  ClientId: config.cognito.userPoolClientId
+});
+
+let createCognitoUser = (email) => new CognitoUser({
+  Username: toUsername(email),
+  Pool: userPool
+});
+
+let toUsername = (email) => email.replace('@', '-at-')
+
+function signin(email, password, onSuccess, onFailure) {
+  const authenticationDetails = new AuthenticationDetails({
+    Username: toUsername(email),
+    Password: password
+  });
+
+  let cognitoUser = createCognitoUser(email);
+  cognitoUser.authenticateUser(
+    authenticationDetails, {
+      onSuccess: onSuccess,
+      onFailure: onFailure
+    }
+  );
+}
 
 export default class SignInDialog extends React.Component {
   constructor(props) {
@@ -48,33 +74,6 @@ export default class SignInDialog extends React.Component {
     };
     this.email = React.createRef();
     this.password = React.createRef();
-
-    this.userPool = new CognitoUserPool({
-      UserPoolId: config.cognito.userPoolId,
-      ClientId: config.cognito.userPoolClientId
-    });
-  }
-
-  toUsername = (email) => email.replace('@', '-at-')
-
-  createCognitoUser = (email) => new CognitoUser({
-      Username: this.toUsername(email),
-      Pool: this.userPool
-  });
-
-  signin = function(email, password, onSuccess, onFailure) {
-    const authenticationDetails = new AuthenticationDetails({
-      Username: this.toUsername(email),
-      Password: password
-    });
-
-    let cognitoUser = this.createCognitoUser(email);
-    cognitoUser.authenticateUser(
-      authenticationDetails, {
-        onSuccess: onSuccess,
-        onFailure: onFailure
-      }
-    );
   }
 
   handleChange = name => event => {
@@ -88,18 +87,33 @@ export default class SignInDialog extends React.Component {
   };
 
   handleClose = () => {
-    if (this.state.email && this.state.password) {
-      const username = this.toUsername(this.state.email);
+    let signinSuccess = (result) => {
+      this.props.updateAuth(result);
+      this.setState({open: false});
     }
-    this.setState({open: false});
+    let signinFailure = (err) => {
+      console.log(err);
+      alert(err.message);
+    }
+    if (this.state.email && this.state.password) {
+      signin(
+        this.state.email, this.state.password,
+        signinSuccess, signinFailure
+      )
+    }
   };
+
+  handleCancel = () => {
+    this.state.password = '';
+    this.setState({open: false});
+  }
 
   render() {
     const actions = [
       <FlatButton
         label="Cancel"
         primary={true}
-        onClick={this.handleClose}
+        onClick={this.handleCancel}
       />,
       <FlatButton
         label="Submit"
