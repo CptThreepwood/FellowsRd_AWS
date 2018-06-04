@@ -5,8 +5,7 @@ import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import AccountCircle from 'material-ui/svg-icons/action/account-circle';
-import { CognitoUserPool, AuthenticationDetails, CognitoUser } from 'amazon-cognito-identity-js';
-import { config } from './config'
+import {signIn} from './CognitoHelperFunctions'
 
 const floating_style = {
   width: '110px',
@@ -20,48 +19,6 @@ const customContentStyle = {
   width: '25%',
   maxWidth: '25%',
 };
-
-// function handleSignin(event) {
-//   var email = $('#emailInputSignin').val();
-//   var password = $('#passwordInputSignin').val();
-//   event.preventDefault();
-//   signin(email, password,
-//       function signinSuccess() {
-//           console.log('Successfully Logged In');
-//           window.location.href = 'booking.html';
-//       },
-//       function signinError(err) {
-//           alert(err);
-//       }
-//   );
-// }
-
-let userPool = new CognitoUserPool({
-  UserPoolId: config.cognito.userPoolId,
-  ClientId: config.cognito.userPoolClientId
-});
-
-let createCognitoUser = (email) => new CognitoUser({
-  Username: toUsername(email),
-  Pool: userPool
-});
-
-let toUsername = (email) => email.replace('@', '-at-')
-
-function signin(email, password, onSuccess, onFailure) {
-  const authenticationDetails = new AuthenticationDetails({
-    Username: toUsername(email),
-    Password: password
-  });
-
-  let cognitoUser = createCognitoUser(email);
-  cognitoUser.authenticateUser(
-    authenticationDetails, {
-      onSuccess: onSuccess,
-      onFailure: onFailure
-    }
-  );
-}
 
 export default class SignInDialog extends React.Component {
   constructor(props) {
@@ -96,7 +53,7 @@ export default class SignInDialog extends React.Component {
       alert(err.message);
     }
     if (this.state.email && this.state.password) {
-      signin(
+      signIn(
         this.state.email, this.state.password,
         signinSuccess, signinFailure
       )
