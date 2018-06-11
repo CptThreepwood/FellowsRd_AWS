@@ -1,18 +1,15 @@
 'use strict';
 
-import createBooking from databaseOps;
-import recordBooking from databaseOps;
-import AWS from aws-sdk;
+import {retrieveBookings, recordBooking} from './databaseOps';
+import AWS from 'aws-sdk';
 
-if (typeof(ddb) === undefined) {
-  const ddb = new AWS.DynamoDB.DocumentClient();
-}
+const ddb = new AWS.DynamoDB.DocumentClient();
 
 module.exports.createBooking = (event, context, callback) => {
-  if (!event.requestContext.authorizer) {
-    errorResponse('Authorization not configured', context.awsRequestId, callback);
-    return;
-  }
+  // if (!event.requestContext.authorizer) {
+  //   errorResponse('Authorization not configured', context.awsRequestId, callback);
+  //   return;
+  // }
 
   // Because we're using a Cognito User Pools authorizer, all of the claims
   // included in the authentication token are provided in the request context.
