@@ -62,13 +62,13 @@ provider:
 
 functions:
   createBooking:
-    handler: handler.createBooking
+    handler: build/handler.createBooking
     events:
       - http:
           path: booking/create
           method: POST
   getBookings:
-    handler: handler.getBookings
+    handler: build/handler.getBookings
     events:
       - http:
           path: booking/get

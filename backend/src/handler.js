@@ -19,6 +19,7 @@ module.exports.createBooking = (event, context, callback) => {
   // This includes the username as well as other attributes.
   const username = event.requestContext.authorizer.claims['cognito:username'];
 
+  console.log('Received event (', bookingId, '): ', event);
   const requestBody = JSON.parse(event.body);
   const bookingId = uuid('www.fellowsrd.com');
   console.log('Received event (', bookingId, '): ', event);
@@ -28,7 +29,7 @@ module.exports.createBooking = (event, context, callback) => {
           statusCode: 201,
           body: JSON.stringify({
             BookingId: bookingId,
-            Confirmed: True,
+            Confirmed: true,
           }),
           headers: {
               'Access-Control-Allow-Origin': '*',
@@ -46,15 +47,14 @@ module.exports.getBookings = (event, context, callback) => {
     return;
   }
 
-  const requestBody = JSON.parse(event.body);
   console.log('Received event: ', event);
+  const requestBody = JSON.parse(event.body);
 
   getBookings(requestBody, ddb).then(() => {
       callback(null, {
           statusCode: 201,
           body: JSON.stringify({
-            BookingId: bookingId,
-            Confirmed: True,
+            Confirmed: true,
           }),
           headers: {
               'Access-Control-Allow-Origin': '*',
