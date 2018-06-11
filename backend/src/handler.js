@@ -22,7 +22,6 @@ module.exports.createBooking = (event, context, callback) => {
   console.log('Received event (', bookingId, '): ', event);
   const requestBody = JSON.parse(event.body);
   const bookingId = uuid('www.fellowsrd.com');
-  console.log('Received event (', bookingId, '): ', event);
 
   recordBooking(bookingId, username, requestBody, ddb).then(() => {
       callback(null, {
@@ -42,15 +41,16 @@ module.exports.createBooking = (event, context, callback) => {
 };
 
 module.exports.getBookings = (event, context, callback) => {
-  if (!event.requestContext.authorizer) {
-    errorResponse('Authorization not configured', context.awsRequestId, callback);
-    return;
-  }
+  // if (!event.requestContext.authorizer) {
+  //   errorResponse('Authorization not configured', context.awsRequestId, callback);
+  //   return;
+  // }
 
   console.log('Received event: ', event);
   const requestBody = JSON.parse(event.body);
 
-  getBookings(requestBody, ddb).then(() => {
+  retrieveBookings(requestBody, ddb).then((data) => {
+      console.log(data);
       callback(null, {
           statusCode: 201,
           body: JSON.stringify({

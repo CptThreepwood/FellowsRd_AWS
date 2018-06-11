@@ -1,28 +1,25 @@
 import uuid from 'uuid/v5';
 
-function getBookings(bookingData, ddb) {
-  let bookings = [];
+function retrieveBookings(bookingData, ddb) {
+  let dates = [];
   let date = new Date(bookingData.startDate);
-  while (date < Date(bookingData.endDate)) {
-    bookings.push(
-      ddb.get({
-        TableName: 'FellowsRdBookings',
-        IndexName: 'StartDate-UserId-index',
-        KeyConditionExpression: 'HashKey = :hkey',
-        ExpressionAttributeValues: {':hkey': Number(date)}
-      })
-    );
-    bookings.push(
-      ddb.get({
-        TableName: 'FellowsRdBookings',
-        IndexName: 'EndDate-UserId-index',
-        KeyConditionExpression: 'HashKey = :hkey',
-        ExpressionAttributeValues: {':hkey': Number(date)}
-      })
-    );
+  const endDate = new Date(bookingData.endDate);
+  while (date <= endDate) {
+    dates.push(new Date(date));
     date = new Date(date.setDate(date.getDate() + 1));
   }
 
+  return Promise.all(dates.map(
+    d => ddb.get({
+      TableName: 'FellowsRdBookings',
+      IndexName: 'StartDate-UserId-index',
+      KeyConditionExpression: 'HashKey = :hkey',
+      ExpressionAttributeValues: {':hkey': Number(date)}
+    }).promise().then((data) => {
+      console.log(data);
+      return data;
+    })
+  ))
 }
 
 function recordBooking(bookingId, username, bookingData, ddb) {
@@ -42,6 +39,6 @@ function recordBooking(bookingId, username, bookingData, ddb) {
 }
 
 export {
-  checkBooking,
+  retrieveBookings,
   recordBooking
 }
