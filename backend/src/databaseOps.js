@@ -10,11 +10,11 @@ function retrieveBookings(bookingData, ddb) {
   }
 
   return Promise.all(dates.map(
-    d => ddb.get({
+    d => ddb.query({
       TableName: 'FellowsRdBookings',
       IndexName: 'StartDate-UserId-index',
-      KeyConditionExpression: 'HashKey = :hkey',
-      ExpressionAttributeValues: {':hkey': Number(date)}
+      KeyConditionExpression: 'StartDate = :date',
+      ExpressionAttributeValues: {':date': Number(d)}
     }).promise().then((data) => {
       console.log(data);
       return data;

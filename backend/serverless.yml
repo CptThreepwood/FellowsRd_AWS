@@ -28,8 +28,11 @@ provider:
         - dynamodb:PutItem
         - dynamodb:BatchWriteItem
         - dynamodb:GetItem
+        - dynamodb:Query
       Resource:
         - arn:aws:dynamodb:ap-southeast-2:321659899380:table/FellowsRdBookings
+        - arn:aws:dynamodb:ap-southeast-2:321659899380:table/FellowsRdBookings/index/StartDate-UserId-index
+        - arn:aws:dynamodb:ap-southeast-2:321659899380:table/FellowsRdBookings/index/EndDate-UserId-index
 
 
 # you can add statements to the Lambda function's IAM Role here
