@@ -47,7 +47,6 @@ module.exports.getBookings = (event, context, callback) => {
   const requestBody = JSON.parse(event.body);
 
   retrieveBookings(requestBody, ddb).then((data) => {
-      console.log(data);
       callback(null, {
           statusCode: 201,
           body: JSON.stringify({

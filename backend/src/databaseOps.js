@@ -16,7 +16,6 @@ function retrieveBookings(bookingData, ddb) {
       KeyConditionExpression: 'StartDate = :date',
       ExpressionAttributeValues: {':date': Number(d)}
     }).promise().then((data) => {
-      console.log(data);
       return data;
     })
   ))
