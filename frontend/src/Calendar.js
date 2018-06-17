@@ -5,9 +5,31 @@ import "./calendarStyle.css";
 
 
 class BookingCalendar extends Component {
+  getBookings() {
+    console.log(this.props.authDetails.idToken)
+    // Get URL from config TODO
+    return fetch('https://iuhpb83475.execute-api.ap-southeast-2.amazonaws.com/dev' + '/booking/get', {
+      method: 'POST',
+      credentials: 'omit',
+      headers: {
+          Authorization: this.props.authDetails.idToken,
+        },
+      body: JSON.stringify({
+        startDate: "2018-03-01",
+        endDate: "2018-03-30"
+      }),
+      contentType: 'application/json',
+      mode: 'cors',
+    }).then(response => response.json()).then(response_json => {
+      console.log('response', response_json)
+    });
+  }
+
   constructor(props) {
     super(props);
   
+    const data = this.getBookings();
+
     const today = moment();
 
     this.state = {

@@ -22,14 +22,18 @@ module.exports.createBooking = (event, context, callback) => {
 
   recordBooking(bookingId, username, requestBody, ddb).then(() => {
       callback(null, {
-          statusCode: 201,
-          body: JSON.stringify({
+          "statusCode": 201,
+          "body": JSON.stringify({
             BookingId: bookingId,
             Confirmed: true,
           }),
-          headers: {
+          "headers": {
               'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Credentials': true,
+              'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent',
+              'Access-Control-Allow-Methods': 'OPTIONS,POST'
           },
+          "isBase64Encoded": false
       });
   }).catch((err) => {
       console.error(err);
@@ -47,15 +51,18 @@ module.exports.getBookings = (event, context, callback) => {
   const requestBody = JSON.parse(event.body);
 
   retrieveBookings(requestBody, ddb).then((data) => {
-      callback(null, {
-          statusCode: 201,
-          body: JSON.stringify({
-            Confirmed: true,
-          }),
-          headers: {
-              'Access-Control-Allow-Origin': '*',
-          },
-      });
+    const responseBody = data.filter(item => item.Count > 0).map(item => item.Items)
+    callback(null, {
+        "statusCode": 200,
+        "body": JSON.stringify(responseBody),
+        "headers": {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Credentials': true,
+          'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent',
+          'Access-Control-Allow-Methods': 'POST'
+        },
+        "isBase64Encoded": false
+    });
   }).catch((err) => {
       console.error(err);
       errorResponse(err.message, context.awsRequestId, callback)
@@ -64,13 +71,17 @@ module.exports.getBookings = (event, context, callback) => {
 
 function errorResponse(errorMessage, awsRequestId, callback) {
   callback(null, {
-    statusCode: 500,
-    body: JSON.stringify({
+    "statusCode": 500,
+    "body": JSON.stringify({
       Error: errorMessage,
       Reference: awsRequestId,
     }),
-    headers: {
+    "headers": {
       'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': true,
+      'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent',
+      'Access-Control-Allow-Methods': 'POST'
     },
+    "isBase64Encoded": false
   });
 }

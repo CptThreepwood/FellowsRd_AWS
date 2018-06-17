@@ -26,7 +26,7 @@ class App extends Component {
         <div className="App">
           <div class="calendarContainer">
             <BookingCalendar
-              authDetails={this.authDetails} />
+              authDetails={this.state.authDetails} />
           </div>
         </div>
       );
