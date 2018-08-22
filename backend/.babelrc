@@ -1,7 +1,9 @@
-"presets": [
-    ["env", {
-      "targets": {
-        "node": "8.10"
-      }
-    }]
-  ]
+{
+    "presets": [
+        ["env", {
+            "targets": {
+                "node": "8.10"
+            }
+        }]
+    ]
+}
