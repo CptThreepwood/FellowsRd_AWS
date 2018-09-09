@@ -25,6 +25,8 @@ functions:
           path: booking/create
           method: POST
           cors: true
+          authorizer:
+            arn: arn:aws:cognito-idp:ap-southeast-2:321659899380:userpool/ap-southeast-2_XnusE3bD3
   getBookings:
     handler: build/handler.getBookings
     events:
@@ -32,3 +34,5 @@ functions:
           path: booking/get
           method: POST
           cors: true
+          authorizer:
+            arn: arn:aws:cognito-idp:ap-southeast-2:321659899380:userpool/ap-southeast-2_XnusE3bD3
