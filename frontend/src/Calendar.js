@@ -6,13 +6,12 @@ import "./calendarStyle.css";
 
 class BookingCalendar extends Component {
   getBookings() {
-    console.log(this.props.authDetails.idToken)
     // Get URL from config TODO
     return fetch('https://iuhpb83475.execute-api.ap-southeast-2.amazonaws.com/dev' + '/booking/get', {
       method: 'POST',
       credentials: 'omit',
       headers: {
-          Authorization: this.props.authDetails.idToken,
+          Authorization: this.props.authDetails.idToken.jwtToken,
         },
       body: JSON.stringify({
         startDate: "2018-03-01",
