@@ -28,8 +28,6 @@ class BookingCalendar extends Component {
 
     const today = moment();
 
-    const data = [];
-
     this.state = {
       isLoading: true,
       year: today.year(),
@@ -40,14 +38,6 @@ class BookingCalendar extends Component {
       showWeekSeparators: true,
       selectRange: true,
       firstDayOfWeek: 1, // monday
-      customCSSclasses: {
-        holidays: [
-        ],
-        free: {
-          'start': '2018-01-01',
-          'end': '2018-12-31'
-        }
-      }
     };
   
     this.state.data = this.getBookings();
@@ -56,11 +46,9 @@ class BookingCalendar extends Component {
   componentDidMount() {
     this.getBookings().then(data =>
       this.setState({
-        customCSSclasses: {
-          booked: day => data.map(
-            booking => day.isAfter( moment(booking.startDate) ) || day.isBefore( moment(booking.endDate) )
-          ).some(x => x === true),
-        },
+        customCSSclasses: day => (data.map(
+            booking => day.isSameOrAfter( moment(booking[0].StartDate) ) && day.isBefore( moment(booking[0].EndDate) )
+          ).some(x => x === true)) ? 'booked' : 'free',
         isLoading: false
       }, () => console.log(this.state))
     );
