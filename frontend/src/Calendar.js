@@ -1,5 +1,6 @@
 import moment from 'moment';
 import React, { Component } from 'react';
+import ReactLoading from "react-loading";
 import {Calendar, CalendarControls} from 'react-yearly-calendar';
 import "./calendarStyle.css";
 
@@ -14,24 +15,23 @@ class BookingCalendar extends Component {
           Authorization: this.props.authDetails.idToken.jwtToken,
         },
       body: JSON.stringify({
-        startDate: "2018-03-01",
-        endDate: "2018-03-30"
+        startDate: "2018-01-01",
+        endDate: "2019-01-01"
       }),
       contentType: 'application/json',
       mode: 'cors',
-    }).then(response => response.json()).then(response_json => {
-      console.log('response', response_json)
-    });
+    }).then(response => response.json());
   }
 
   constructor(props) {
     super(props);
-  
-    const data = this.getBookings();
 
     const today = moment();
 
+    const data = [];
+
     this.state = {
+      isLoading: true,
       year: today.year(),
       selectedDay: today,
       selectedRange: [today, moment(today).add(15, 'day')],
@@ -42,18 +42,28 @@ class BookingCalendar extends Component {
       firstDayOfWeek: 1, // monday
       customCSSclasses: {
         holidays: [
-          '2018-04-25',
-          '2018-05-01',
-          '2018-06-02',
-          '2018-08-15',
-          '2018-11-01'
         ],
-        free:{
+        free: {
           'start': '2018-01-01',
           'end': '2018-12-31'
         }
       }
     };
+  
+    this.state.data = this.getBookings();
+  }
+
+  componentDidMount() {
+    this.getBookings().then(data =>
+      this.setState({
+        customCSSclasses: {
+          booked: day => data.map(
+            booking => day.isAfter( moment(booking.startDate) ) || day.isBefore( moment(booking.endDate) )
+          ).some(x => x === true),
+        },
+        isLoading: false
+      }, () => console.log(this.state))
+    );
   }
 
   onPrevYear() {
@@ -109,32 +119,41 @@ class BookingCalendar extends Component {
       selectedRange,
       customCSSclasses
     } = this.state;
-    return (
-      <div>
-        <div id="calendar">
-          <CalendarControls
-            year={year}
-            showTodayButton={showTodayBtn}
-            onPrevYear={() => this.onPrevYear()}
-            onNextYear={() => this.onNextYear()}
-            goToToday={() => this.goToToday()}
-          />
-          <Calendar
-            year={year}
-            selectedDay={selectedDay}
-            showDaysOfWeek={showDaysOfWeek}
-            forceFullWeeks={forceFullWeeks}
-            showWeekSeparators={showWeekSeparators}
-            firstDayOfWeek={firstDayOfWeek}
-            selectRange={selectRange}
-            selectedRange={selectedRange}
-            onPickDate={(date, classes) => this.datePicked(date, classes)}
-            onPickRange={(start, end) => this.rangePicked(start, end)}
-            customClasses={customCSSclasses}
-          />
+    console.log(this.state);
+    if (this.state.isLoading) {
+      return (
+        <div>
+          <ReactLoading type='bubbles' color="#555" />
         </div>
-      </div>
-    )
+      )
+    } else {
+      return (
+        <div>
+          <div id="calendar">
+            <CalendarControls
+              year={year}
+              showTodayButton={showTodayBtn}
+              onPrevYear={() => this.onPrevYear()}
+              onNextYear={() => this.onNextYear()}
+              goToToday={() => this.goToToday()}
+            />
+            <Calendar
+              year={year}
+              selectedDay={selectedDay}
+              showDaysOfWeek={showDaysOfWeek}
+              forceFullWeeks={forceFullWeeks}
+              showWeekSeparators={showWeekSeparators}
+              firstDayOfWeek={firstDayOfWeek}
+              selectRange={selectRange}
+              selectedRange={selectedRange}
+              onPickDate={(date, classes) => this.datePicked(date, classes)}
+              onPickRange={(start, end) => this.rangePicked(start, end)}
+              customClasses={customCSSclasses}
+            />
+          </div>
+        </div>
+      )
+    }
   }
 }
 
