@@ -2,7 +2,13 @@ import moment from 'moment';
 import React, { Component } from 'react';
 import ReactLoading from "react-loading";
 import {Calendar, CalendarControls} from 'react-yearly-calendar';
+import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
+import {BottomNavigation, BottomNavigationItem} from 'material-ui/BottomNavigation';
+import Paper from 'material-ui/Paper';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import Backup from 'material-ui/svg-icons/action/backup';
 import "./calendarStyle.css";
+import { areRangesOverlapping } from 'date-fns';
 
 
 class BookingCalendar extends Component {
@@ -119,9 +125,20 @@ class BookingCalendar extends Component {
       firstDayOfWeek,
       selectRange,
       selectedRange,
-      customCSSclasses
+      customCSSclasses,
+      bookings
     } = this.state;
     console.log(this.state);
+
+    const selectedBookings = bookings.filter(booking => areRangesOverlapping(
+      booking.StartDate, booking.EndDate, selectedRange[0].toDate(), selectedRange[1].toDate()
+    ));
+    console.log(selectedBookings);
+
+    const paperStyle = {
+      margin: 20
+    };
+
     if (this.state.isLoading) {
       return (
         <div>
@@ -131,28 +148,49 @@ class BookingCalendar extends Component {
     } else {
       return (
         <div>
-          <div id="calendar">
-            <CalendarControls
-              year={year}
-              showTodayButton={showTodayBtn}
-              onPrevYear={() => this.onPrevYear()}
-              onNextYear={() => this.onNextYear()}
-              goToToday={() => this.goToToday()}
-            />
-            <Calendar
-              year={year}
-              selectedDay={selectedDay}
-              showDaysOfWeek={showDaysOfWeek}
-              forceFullWeeks={forceFullWeeks}
-              showWeekSeparators={showWeekSeparators}
-              firstDayOfWeek={firstDayOfWeek}
-              selectRange={selectRange}
-              selectedRange={selectedRange}
-              onPickDate={(date, classes) => this.datePicked(date, classes)}
-              onPickRange={(start, end) => this.rangePicked(start, end)}
-              customClasses={customCSSclasses}
-            />
-          </div>
+          <MuiThemeProvider>
+            <Paper style={paperStyle}>
+              <div id="calendar">
+                <CalendarControls
+                  year={year}
+                  showTodayButton={showTodayBtn}
+                  onPrevYear={() => this.onPrevYear()}
+                  onNextYear={() => this.onNextYear()}
+                  goToToday={() => this.goToToday()}
+                />
+                <Calendar
+                  year={year}
+                  selectedDay={selectedDay}
+                  showDaysOfWeek={showDaysOfWeek}
+                  forceFullWeeks={forceFullWeeks}
+                  showWeekSeparators={showWeekSeparators}
+                  firstDayOfWeek={firstDayOfWeek}
+                  selectRange={selectRange}
+                  selectedRange={selectedRange}
+                  onPickDate={(date, classes) => this.datePicked(date, classes)}
+                  onPickRange={(start, end) => this.rangePicked(start, end)}
+                  customClasses={customCSSclasses}
+                />
+              </div>
+            </Paper>
+            <Paper style={paperStyle}>
+              <div id="info">
+                {selectedBookings.map((booking) => (
+                <Card>
+                  <CardHeader
+                    title={booking.UserId}
+                    subtitle={booking.StartDate + ' - ' + booking.EndDate}
+                    actAsExpander={true}
+                    showExpandableButton={true}
+                  />
+                </Card>
+                ))}
+              </div>
+            </Paper>
+            <BottomNavigation selectedIndex={0}>
+              <BottomNavigationItem label="Book" icon={<Backup />}/>
+            </BottomNavigation>
+          </MuiThemeProvider>
         </div>
       )
     }
