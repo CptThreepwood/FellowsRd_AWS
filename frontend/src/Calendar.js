@@ -20,7 +20,11 @@ class BookingCalendar extends Component {
       }),
       contentType: 'application/json',
       mode: 'cors',
-    }).then(response => response.json());
+    }).then(
+      response => response.json()
+    ).then(
+      bookings => bookings.map(booking => booking[0])
+    );
   }
 
   constructor(props) {
@@ -32,25 +36,35 @@ class BookingCalendar extends Component {
       isLoading: true,
       year: today.year(),
       selectedDay: today,
-      selectedRange: [today, moment(today).add(15, 'day')],
+      selectedRange: [today, moment(today).add(1, 'day')],
       showDaysOfWeek: true,
       showTodayBtn: true,
       showWeekSeparators: true,
       selectRange: true,
       firstDayOfWeek: 1, // monday
+      bookings: []
     };
-  
-    this.state.data = this.getBookings();
+  }
+
+  dayIsBooked(bookings) {
+    return day => bookings.map(
+      booking => (
+        day.isBetween(
+          moment(booking.StartDate).hours(0).minutes(0).seconds(0),
+          moment(booking.EndDate).hours(0).minutes(0).seconds(0),
+          null, "[)"
+        )
+      )
+    ).some(x => x === true) ? 'booked' : 'free';
   }
 
   componentDidMount() {
     this.getBookings().then(data =>
       this.setState({
-        customCSSclasses: day => (data.map(
-            booking => day.isSameOrAfter( moment(booking[0].StartDate) ) && day.isBefore( moment(booking[0].EndDate) )
-          ).some(x => x === true)) ? 'booked' : 'free',
+        bookings: data,
+        customCSSclasses: this.dayIsBooked(data),
         isLoading: false
-      }, () => console.log(this.state))
+      })
     );
   }
 
