@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import ReactLoading from "react-loading";
 import {Calendar, CalendarControls} from 'react-yearly-calendar';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
-import {BottomNavigation, BottomNavigationItem} from 'material-ui/BottomNavigation';
+import RaisedButton from 'material-ui/RaisedButton';
 import Paper from 'material-ui/Paper';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Backup from 'material-ui/svg-icons/action/backup';
@@ -187,9 +187,15 @@ class BookingCalendar extends Component {
                 ))}
               </div>
             </Paper>
-            <BottomNavigation selectedIndex={0}>
-              <BottomNavigationItem label="Book" icon={<Backup />}/>
-            </BottomNavigation>
+            <Paper style={paperStyle}>
+              {selectedRange[0].toISOString()} - {selectedRange[1].toISOString()}
+              <RaisedButton
+                label="Book"
+                icon={<Backup />}
+                secondary={true}
+                style={paperStyle}
+              />
+            </Paper>
           </MuiThemeProvider>
         </div>
       )
