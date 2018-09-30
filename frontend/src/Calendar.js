@@ -2,18 +2,22 @@ import moment from 'moment';
 import React, { Component } from 'react';
 import ReactLoading from "react-loading";
 import {Calendar, CalendarControls} from 'react-yearly-calendar';
-import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
-import RaisedButton from 'material-ui/RaisedButton';
-import Paper from 'material-ui/Paper';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import Backup from 'material-ui/svg-icons/action/backup';
+import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
+import Button from '@material-ui/core/Button';
+import Paper from '@material-ui/core/Paper';
+import TextField from '@material-ui/core/TextField';
+import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
+import Backup from '@material-ui/icons/Backup';
 import "./calendarStyle.css";
 import { areRangesOverlapping } from 'date-fns';
 
 
 class BookingCalendar extends Component {
-  getBookings() {
+  getBookings(year) {
     // Get URL from config TODO
+    var start = new Date(year, 0, 1);
+    var end = new Date(year + 1, 0, 1);
     return fetch('https://iuhpb83475.execute-api.ap-southeast-2.amazonaws.com/dev' + '/booking/get', {
       method: 'POST',
       credentials: 'omit',
@@ -21,16 +25,25 @@ class BookingCalendar extends Component {
           Authorization: this.props.authDetails.idToken.jwtToken,
         },
       body: JSON.stringify({
-        startDate: "2018-01-01",
-        endDate: "2019-01-01"
+        startDate: start.toDateString(),
+        endDate: end.toDateString(),
       }),
       contentType: 'application/json',
       mode: 'cors',
     }).then(
       response => response.json()
     ).then(
-      bookings => bookings.map(booking => booking[0])
+      // Why only take the first response?  This is maybe a bug for the future
+      bookings => bookings.map(this.formatBooking)
     );
+  }
+
+  formatBooking(booking) {
+    return {
+      ...booking[0],
+      StartDate: new moment(booking[0].StartDate),
+      EndDate: new moment(booking[0].EndDate),
+    }
   }
 
   constructor(props) {
@@ -65,13 +78,7 @@ class BookingCalendar extends Component {
   }
 
   componentDidMount() {
-    this.getBookings().then(data =>
-      this.setState({
-        bookings: data,
-        customCSSclasses: this.dayIsBooked(data),
-        isLoading: false
-      })
-    );
+    this.renderBookings();
   }
 
   onPrevYear() {
@@ -110,28 +117,42 @@ class BookingCalendar extends Component {
     });
   }
 
-  onDatePicked(date) {
-    alert(date);
+  renderBookings() {
+    return this.getBookings(this.state.year).then(data =>
+      this.setState({
+        bookings: data,
+        customCSSclasses: this.dayIsBooked(data),
+        isLoading: false
+      })
+    );
+  }
+
+  makeBooking(bookingData) {
+    // Get URL from config TODO
+    return fetch('https://iuhpb83475.execute-api.ap-southeast-2.amazonaws.com/dev' + '/booking/create', {
+      method: 'POST',
+      credentials: 'omit',
+      headers: {
+          Authorization: this.props.authDetails.idToken.jwtToken,
+        },
+      body: JSON.stringify(bookingData),
+      contentType: 'application/json',
+      mode: 'cors',
+    }).then(this.renderBookings);
+  }
+
+  startBooking(bookingData) {
+    this.setState({
+      isLoading: true
+    }, this.makeBooking(bookingData))
   }
 
   render() {
-    const {
-      year,
-      showTodayBtn,
-      selectedDay,
-      showDaysOfWeek,
-      forceFullWeeks,
-      showWeekSeparators,
-      firstDayOfWeek,
-      selectRange,
-      selectedRange,
-      customCSSclasses,
-      bookings
-    } = this.state;
     console.log(this.state);
 
-    const selectedBookings = bookings.filter(booking => areRangesOverlapping(
-      booking.StartDate, booking.EndDate, selectedRange[0].toDate(), selectedRange[1].toDate()
+    const selectedBookings = this.state.bookings.filter(booking => areRangesOverlapping(
+      booking.StartDate, booking.EndDate,
+      this.state.selectedRange[0].toDate(), this.state.selectedRange[1].toDate()
     ));
     console.log(selectedBookings);
 
@@ -152,24 +173,24 @@ class BookingCalendar extends Component {
             <Paper style={paperStyle}>
               <div id="calendar">
                 <CalendarControls
-                  year={year}
-                  showTodayButton={showTodayBtn}
+                  year={this.state.year}
+                  showTodayButton={true}
                   onPrevYear={() => this.onPrevYear()}
                   onNextYear={() => this.onNextYear()}
                   goToToday={() => this.goToToday()}
                 />
                 <Calendar
-                  year={year}
-                  selectedDay={selectedDay}
-                  showDaysOfWeek={showDaysOfWeek}
-                  forceFullWeeks={forceFullWeeks}
-                  showWeekSeparators={showWeekSeparators}
-                  firstDayOfWeek={firstDayOfWeek}
-                  selectRange={selectRange}
-                  selectedRange={selectedRange}
+                  year={this.state.year}
+                  selectedDay={this.state.selectedDay}
+                  showDaysOfWeek={true}
+                  forceFullWeeks={true}
+                  showWeekSeparators={true}
+                  firstDayOfWeek={true}
+                  selectRange={true}
+                  selectedRange={this.state.selectedRange}
                   onPickDate={(date, classes) => this.datePicked(date, classes)}
                   onPickRange={(start, end) => this.rangePicked(start, end)}
-                  customClasses={customCSSclasses}
+                  customClasses={this.state.customCSSclasses}
                 />
               </div>
             </Paper>
@@ -179,22 +200,41 @@ class BookingCalendar extends Component {
                 <Card>
                   <CardHeader
                     title={booking.UserId}
-                    subtitle={booking.StartDate + ' - ' + booking.EndDate}
-                    actAsExpander={true}
-                    showExpandableButton={true}
+                    subtitle={'Arriving ' + booking.StartDate.format('ddd, MMM Do Y') + ' Leaving ' + booking.EndDate.format('ddd, MMM Do Y')}
                   />
                 </Card>
                 ))}
+                <Card>
+                  <CardHeader
+                    title={''}
+                    subtitle={'Arriving: ' + this.state.selectedRange[0].format('ddd, MMM Do Y') + '<br> Leaving: ' + this.state.selectedRange[1].format('ddd, MMM Do Y')}
+                    action={
+                      <Button
+                        variant="contained"
+                        label="Book"
+                        icon={<Backup />}
+                        secondary={true}
+                        style={paperStyle}
+                        // onClick={
+                        //   this.makeBooking({
+                        //     StartDate: this.state.selectedRange[0],
+                        //     EndDate: this.state.selectedRange[1],
+                        //     nPeople: this.state.nPeople
+                        //   })
+                        // }
+                      />
+                    }
+                  />
+                  <TextField
+                    type="number"
+                    label="Number of People"
+                    value={1}
+                    onChange={event => this.setState({
+                      nPeople: event.target.value()
+                    })}
+                    />
+                </Card>
               </div>
-            </Paper>
-            <Paper style={paperStyle}>
-              {selectedRange[0].toISOString()} - {selectedRange[1].toISOString()}
-              <RaisedButton
-                label="Book"
-                icon={<Backup />}
-                secondary={true}
-                style={paperStyle}
-              />
             </Paper>
           </MuiThemeProvider>
         </div>

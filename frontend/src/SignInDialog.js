@@ -1,11 +1,12 @@
 import React from 'react';
-import Dialog from 'material-ui/Dialog';
-import TextField from 'material-ui/TextField';
-import FlatButton from 'material-ui/FlatButton';
-import RaisedButton from 'material-ui/RaisedButton';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import AccountCircle from 'material-ui/svg-icons/action/account-circle';
+import Dialog from '@material-ui/core/Dialog';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
+import AccountCircle from '@material-ui/icons/AccountCircle';
 import {signIn} from './CognitoHelperFunctions'
+import { DialogTitle, DialogActions, DialogContent } from '@material-ui/core';
+import Slide from '@material-ui/core/Slide';
 
 const floating_style = {
   width: '110px',
@@ -15,10 +16,9 @@ const floating_style = {
   marginTop: '70vh',
 };
 
-const customContentStyle = {
-  width: '25%',
-  maxWidth: '25%',
-};
+function Transition(props) {
+  return <Slide direction="down" {...props} />;
+}
 
 export default class SignInDialog extends React.Component {
   constructor(props) {
@@ -66,49 +66,50 @@ export default class SignInDialog extends React.Component {
   }
 
   render() {
-    const actions = [
-      <FlatButton
-        label="Cancel"
-        primary={true}
-        onClick={this.handleCancel}
-      />,
-      <FlatButton
-        label="Submit"
-        primary={true}
-        keyboardFocused={true}
-        onClick={this.handleClose}
-      />,
-    ];
 
     return (
       <div>
       <MuiThemeProvider>
-        <RaisedButton
-          label="Sign In"
-          primary={true}
+        <Button
+          variant="contained"
+          color="primary"
           icon={<AccountCircle/>}
           style={floating_style}
           onClick={this.handleOpen}
-        />
+        >Sign In</Button>
         <Dialog
-          title="Sign In"
-          actions={actions}
-          modal={false}
-          contentStyle={customContentStyle}
+          TransitionComponent={Transition}
           open={this.state.open}
-          onRequestClose={this.handleClose}
+          onClose={this.handleCancel}
+          onBackdropClick={this.handleCancel}
         >
-          <TextField
-            hintText="Email"
-            value={this.state.email}
-            onChange={this.handleChange('email')}
-          /><br />
-          <TextField
-            type='password'
-            hintText="Password"
-            value={this.state.password}
-            onChange={this.handleChange('password')}
-          /><br />
+          <DialogTitle>Sign In</DialogTitle>
+          <DialogContent>
+            <TextField
+              label="Email"
+              autoFocus
+              value={this.state.email}
+              onChange={this.handleChange('email')}
+              margin="dense"
+              fullWidth
+            />
+            <TextField
+              type='password'
+              label="Password"
+              value={this.state.password}
+              onChange={this.handleChange('password')}
+              margin="dense"
+              fullWidth
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button color="primary"  onClick={this.handleCancel}>
+              Cancel
+            </Button>
+            <Button color="primary" keyboardFocused={true} onClick={this.handleClose}>
+              Submit
+            </Button>
+          </DialogActions>
         </Dialog>
       </MuiThemeProvider>
       </div>
