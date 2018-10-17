@@ -61,8 +61,10 @@ export default class SignInDialog extends React.Component {
   };
 
   handleCancel = () => {
-    this.state.password = '';
-    this.setState({open: false});
+    this.setState({
+      open: false,
+      password: ''
+    });
   }
 
   render() {
