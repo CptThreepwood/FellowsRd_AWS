@@ -32,7 +32,8 @@ function recordBooking(bookingId, username, bookingData, ddb) {
             Rufus: bookingData.rufus,
             BackRoom: bookingData.backRoom,
             StartDate: bookingData.startDate,
-            EndDate: bookingData.endDate
+            EndDate: bookingData.endDate,
+            nPeople: bookingData.nPeople
         },
     }).promise();
 }
