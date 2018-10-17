@@ -2,15 +2,15 @@ import moment from 'moment';
 import React, { Component } from 'react';
 import ReactLoading from "react-loading";
 import {Calendar, CalendarControls} from 'react-yearly-calendar';
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import Button from '@material-ui/core/Button';
-import Paper from '@material-ui/core/Paper';
-import TextField from '@material-ui/core/TextField';
 import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
-import Backup from '@material-ui/icons/Backup';
+import BackupIcon from '@material-ui/icons/Backup';
 import "./calendarStyle.css";
 import { areRangesOverlapping } from 'date-fns';
+import {
+  Avatar, Button,
+  Card, CardActions, CardContent, CardHeader,
+  Paper, Grid, TextField, Typography
+} from '@material-ui/core';
 
 
 class BookingCalendar extends Component {
@@ -61,7 +61,8 @@ class BookingCalendar extends Component {
       showWeekSeparators: true,
       selectRange: true,
       firstDayOfWeek: 1, // monday
-      bookings: []
+      bookings: [],
+      nPeople: 1,
     };
   }
 
@@ -148,17 +149,17 @@ class BookingCalendar extends Component {
   }
 
   render() {
-    console.log(this.state);
-
     const selectedBookings = this.state.bookings.filter(booking => areRangesOverlapping(
       booking.StartDate, booking.EndDate,
       this.state.selectedRange[0].toDate(), this.state.selectedRange[1].toDate()
     ));
-    console.log(selectedBookings);
 
     const paperStyle = {
       margin: 20
     };
+    const bookButtonStyle = {
+      'margin-left': 'auto'
+    }
 
     if (this.state.isLoading) {
       return (
@@ -194,48 +195,87 @@ class BookingCalendar extends Component {
                 />
               </div>
             </Paper>
-            <Paper style={paperStyle}>
-              <div id="info">
+            <div id="info">
+              <Grid container spacing={24}>
                 {selectedBookings.map((booking) => (
-                <Card>
-                  <CardHeader
-                    title={booking.UserId}
-                    subtitle={'Arriving ' + booking.StartDate.format('ddd, MMM Do Y') + ' Leaving ' + booking.EndDate.format('ddd, MMM Do Y')}
-                  />
-                </Card>
+                  <Grid item xs={6}>
+                    <Paper style={paperStyle}>
+                      <Card>
+                        <CardHeader
+                          avatar={
+                            <Avatar aria-label={booking.UserId} className='booking-avatar'>
+                              {booking.UserId}
+                            </Avatar>
+                          }
+                          title={booking.UserId}
+                        />
+                        <CardContent>
+                          <Typography variant="h5">
+                            {'Arriving: ' + booking.StartDate.format('ddd, MMM Do Y')}
+                          </Typography>
+                          <Typography variant="h5">
+                            {'Leaving: ' + booking.EndDate.format('ddd, MMM Do Y')}
+                          </Typography>
+                          <Typography variant="h5">
+                            {'Number of People: ' + booking.nPeople}
+                          </Typography>
+                        </CardContent>
+                      </Card>
+                    </Paper>
+                  </Grid>
                 ))}
-                <Card>
-                  <CardHeader
-                    title={''}
-                    subtitle={'Arriving: ' + this.state.selectedRange[0].format('ddd, MMM Do Y') + '<br> Leaving: ' + this.state.selectedRange[1].format('ddd, MMM Do Y')}
-                    action={
-                      <Button
-                        variant="contained"
-                        label="Book"
-                        icon={<Backup />}
-                        secondary={true}
-                        style={paperStyle}
-                        // onClick={
-                        //   this.makeBooking({
-                        //     StartDate: this.state.selectedRange[0],
-                        //     EndDate: this.state.selectedRange[1],
-                        //     nPeople: this.state.nPeople
-                        //   })
-                        // }
-                      />
-                    }
-                  />
-                  <TextField
-                    type="number"
-                    label="Number of People"
-                    value={1}
-                    onChange={event => this.setState({
-                      nPeople: event.target.value()
-                    })}
-                    />
-                </Card>
-              </div>
-            </Paper>
+                {
+                  selectedBookings.length % 2 !== 0 && 
+                  <Grid item xs={6}>
+                  </Grid>
+                }
+                <Grid item xs={6}>
+                </Grid>
+                <Grid item xs={6}>
+                  <Paper style={paperStyle}>
+                    <Card>
+                      <CardContent>
+                        <Typography variant="h5">
+                        {
+                          'Arriving: ' + this.state.selectedRange[0].format('ddd, MMM Do Y')
+                        }
+                        </Typography>
+                        <Typography>
+                        {
+                          'Leaving: ' + this.state.selectedRange[1].format('ddd, MMM Do Y')
+                        }
+                        </Typography>
+                      </CardContent>
+                      <CardActions>
+                      <TextField
+                        type="number"
+                        label="Number of People"
+                        value={this.state.nPeople}
+                        onChange={event => this.setState({
+                          nPeople: event.target.value()
+                        })}
+                        />
+                        <Button
+                          variant="contained"
+                          color="secondary"
+                          style={bookButtonStyle}
+                          onClick={
+                            this.makeBooking({
+                              StartDate: this.state.selectedRange[0],
+                              EndDate: this.state.selectedRange[1],
+                              nPeople: this.state.nPeople
+                            })
+                          }
+                        >
+                          Book
+                          <BackupIcon />
+                        </Button>
+                      </CardActions>
+                    </Card>
+                  </Paper>
+                </Grid>
+              </Grid>
+            </div>
           </MuiThemeProvider>
         </div>
       )
