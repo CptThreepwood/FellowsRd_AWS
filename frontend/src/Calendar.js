@@ -130,16 +130,20 @@ class BookingCalendar extends Component {
 
   makeBooking(bookingData) {
     // Get URL from config TODO
-    return fetch('https://iuhpb83475.execute-api.ap-southeast-2.amazonaws.com/dev' + '/booking/create', {
-      method: 'POST',
-      credentials: 'omit',
-      headers: {
-          Authorization: this.props.authDetails.idToken.jwtToken,
-        },
-      body: JSON.stringify(bookingData),
-      contentType: 'application/json',
-      mode: 'cors',
-    }).then(this.renderBookings);
+    return this.setState({isLoading: true}).then(
+      fetch(
+        'https://iuhpb83475.execute-api.ap-southeast-2.amazonaws.com/dev' + '/booking/create', {
+        method: 'POST',
+        credentials: 'omit',
+        headers: {
+            Authorization: this.props.authDetails.idToken.jwtToken,
+          },
+        body: JSON.stringify(bookingData),
+        contentType: 'application/json',
+        mode: 'cors',
+        }
+      )
+    ).then(this.renderBookings);
   }
 
   startBooking(bookingData) {
