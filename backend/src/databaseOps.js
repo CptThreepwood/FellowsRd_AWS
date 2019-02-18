@@ -18,22 +18,22 @@ function retrieveBookings(bookingData, ddb) {
     })
   ))
 }
-
+  
 function recordBooking(bookingId, username, bookingData, ddb) {
-    return ddb.put({
-        TableName: 'FellowsRdBookings',
-        Item: {
-            BookingId: bookingId,
-            UserId: username,
-            BunkRoom: bookingData.bunkRoom,
-            GAndM: bookingData.GAndM,
-            Rufus: bookingData.rufus,
-            BackRoom: bookingData.backRoom,
-            StartDate: bookingData.startDate,
-            EndDate: bookingData.endDate,
-            nPeople: bookingData.nPeople
-        },
-    }).promise();
+  return ddb.put({
+    TableName: 'FellowsRdBookings',
+    Item: {
+      BookingId: bookingId,
+      UserId: username,
+      BunkRoom: bookingData.bunkRoom,
+      GAndM: bookingData.GAndM,
+      Rufus: bookingData.rufus,
+      BackRoom: bookingData.backRoom,
+      StartDate: bookingData.startDate,
+      EndDate: bookingData.endDate,
+      nPeople: bookingData.nPeople
+    },
+  }).promise();
 }
 
 export {
