@@ -1,5 +1,8 @@
+# Libraries (front and backend)
 node_modules
-jspm_packages
 
-# Serverless directories
-.serverless
+# Backend ignores
+
+## Build Dir
+backend/build
+
