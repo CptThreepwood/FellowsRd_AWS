@@ -2,6 +2,7 @@
 
 import {retrieveBookings, recordBooking} from './databaseOps';
 import AWS from 'aws-sdk';
+import uuid from 'uuid/v1';
 
 const ddb = new AWS.DynamoDB.DocumentClient();
 
@@ -14,11 +15,12 @@ module.exports.createBooking = (event, context, callback) => {
   // Because we're using a Cognito User Pools authorizer, all of the claims
   // included in the authentication token are provided in the request context.
   // This includes the username as well as other attributes.
-  const username = event.requestContext.authorizer.claims['cognito:username'];
+  console.log('Received event: ', event);
+  const bookingId = uuid();
+  console.log('Booking ID: ', bookingId)
 
-  console.log('Received event (', bookingId, '): ', event);
   const requestBody = JSON.parse(event.body);
-  const bookingId = uuid('www.fellowsrd.com');
+  const username = event.requestContext.authorizer.claims['cognito:username'];
 
   recordBooking(bookingId, username, requestBody, ddb).then(() => {
       callback(null, {

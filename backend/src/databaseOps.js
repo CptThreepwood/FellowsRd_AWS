@@ -1,5 +1,3 @@
-import uuid from 'uuid/v5';
-
 function retrieveBookings(bookingData, ddb) {
   let dates = [];
   let date = new Date(bookingData.startDate);
