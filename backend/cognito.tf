@@ -16,7 +16,7 @@ resource "aws_cognito_user_pool" "users" {
 
     developer_only_attribute    = false
     mutable                     = true
-    required                    = true
+    # required                    = true
   }
 
   email_verification_subject = "Welcome to Fellows Rd"
