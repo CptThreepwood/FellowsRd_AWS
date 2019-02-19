@@ -13,7 +13,8 @@ resource "aws_api_gateway_method" "get_getBookings" {
   rest_api_id   = "${aws_api_gateway_rest_api.booking_gateway.id}"
   resource_id   = "${aws_api_gateway_resource.proxy_resource.id}"
   http_method   = "GET"
-  authorization = "NONE"
+  authorization = "COGNITO_USER_POOLS"
+  authorizer_id = "${aws_cognito_user_pool.users.id}"
 }
 
 resource "aws_api_gateway_integration" "getBookings" {
@@ -30,7 +31,8 @@ resource "aws_api_gateway_method" "post_createBooking" {
   rest_api_id   = "${aws_api_gateway_rest_api.booking_gateway.id}"
   resource_id   = "${aws_api_gateway_resource.proxy_resource.id}"
   http_method   = "POST"
-  authorization = "NONE"
+  authorization = "COGNITO_USER_POOLS"
+  authorizer_id = "${aws_cognito_user_pool.users.id}"
 }
 
 resource "aws_api_gateway_integration" "createBooking" {
