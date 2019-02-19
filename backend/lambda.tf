@@ -26,7 +26,7 @@ resource "aws_lambda_permission" "apiCreateRole" {
 
   # The /*/* portion grants access from any method on any resource
   # within the API Gateway "REST API".
-  source_arn = "${aws_api_gateway_deployment.booking_gateway.execution_arn}/*/*"
+  source_arn = "${aws_api_gateway_deployment.production.execution_arn}/*/*"
 }
 
 resource "aws_lambda_permission" "apiGetRole" {
@@ -37,7 +37,7 @@ resource "aws_lambda_permission" "apiGetRole" {
 
   # The /*/* portion grants access from any method on any resource
   # within the API Gateway "REST API".
-  source_arn = "${aws_api_gateway_deployment.booking_gateway.execution_arn}/*/*"
+  source_arn = "${aws_api_gateway_deployment.production.execution_arn}/*/*"
 }
 
 resource aws_lambda_function createBooking {

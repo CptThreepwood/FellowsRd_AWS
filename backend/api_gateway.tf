@@ -19,8 +19,8 @@ resource "aws_api_gateway_method" "get_getBookings" {
 
 resource "aws_api_gateway_integration" "getBookings" {
   rest_api_id = "${aws_api_gateway_rest_api.booking_gateway.id}"
-  resource_id = "${aws_api_gateway_method.proxy_method.resource_id}"
-  http_method = "${aws_api_gateway_method.proxy_method.http_method}"
+  resource_id = "${aws_api_gateway_method.get_getBookings.resource_id}"
+  http_method = "${aws_api_gateway_method.get_getBookings.http_method}"
 
   integration_http_method = "GET"
   type                    = "AWS_PROXY"
@@ -37,8 +37,8 @@ resource "aws_api_gateway_method" "post_createBooking" {
 
 resource "aws_api_gateway_integration" "createBooking" {
   rest_api_id = "${aws_api_gateway_rest_api.booking_gateway.id}"
-  resource_id = "${aws_api_gateway_method.proxy_method.resource_id}"
-  http_method = "${aws_api_gateway_method.proxy_method.http_method}"
+  resource_id = "${aws_api_gateway_method.post_createBooking.resource_id}"
+  http_method = "${aws_api_gateway_method.post_createBooking.http_method}"
 
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
@@ -47,7 +47,8 @@ resource "aws_api_gateway_integration" "createBooking" {
 
 resource "aws_api_gateway_deployment" "production" {
   depends_on = [
-    "aws_api_gateway_integration.booking",
+    "aws_api_gateway_integration.createBooking",
+    "aws_api_gateway_integration.getBookings",
   ]
 
   rest_api_id = "${aws_api_gateway_rest_api.booking_gateway.id}"
