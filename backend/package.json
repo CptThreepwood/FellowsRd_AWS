@@ -5,9 +5,11 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "babel src --out-dir build",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy": "yarn build && sls deploy --aws-profile personal"
+    "deploy": "terraform apply",
+    "build": "zip ./build/currentBuild.zip -r index.js src/* templates/* node_modules",
+    "taint": "terraform taint aws_s3_bucket_object.bookingLambdaPackage && terraform taint aws_lambda_function.createBooking && terraform taint aws_lambda_function.getBookings",
+    "redeploy": "yarn build && yarn taint && yarn deploy"
   },
   "dependencies": {
     "aws-sdk": "^2.213.1",

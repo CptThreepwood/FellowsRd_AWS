@@ -1,6 +1,6 @@
 'use strict';
 
-import {retrieveBookings, recordBooking} from './databaseOps';
+import {retrieveBookings, recordBooking} from 'src/databaseOps';
 import AWS from 'aws-sdk';
 import uuid from 'uuid/v1';
 
