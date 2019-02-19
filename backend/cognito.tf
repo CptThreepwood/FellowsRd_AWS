@@ -1,6 +1,6 @@
 resource "aws_cognito_user_pool" "users" {
   name = "${var.app_name}_users"
-  username_attributes = "email"
+  username_attributes = ["email"]
   
   password_policy = {
     minimum_length    = 8
@@ -11,7 +11,7 @@ resource "aws_cognito_user_pool" "users" {
   }
 
   schema = {
-    name = "Display Name"
+    name = "displayName"
     attribute_data_type = "String"
 
     developer_only_attribute    = false

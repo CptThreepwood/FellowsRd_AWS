@@ -10,19 +10,7 @@ resource aws_dynamodb_table booking_table {
         type = "S"
     }
     attribute = {
-        name = "userID"
-        type = "S"
-    }
-    attribute = {
         name = "startDate"
         type = "S"
-    }
-    attribute = {
-        name = "endDate"
-        type = "S"
-    }
-    attribute = {
-        name = "nPeople"
-        type = "N"
     }
 }

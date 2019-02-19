@@ -18,6 +18,17 @@ resource aws_iam_role lambda_role {
 EOF
 }
 
+resource "aws_s3_bucket" "bookingLambdaBucket" {
+    bucket      = "${var.app_name}-deployment-bucket"
+    acl         = "private"
+}
+
+resource "aws_s3_bucket_object" "bookingLambdaPackage" {
+    key         = "${var.app_name}_${var.version}.zip"
+    bucket      = "${aws_s3_bucket.bookingLambdaBucket.id}"
+    source      = "build/currentBuild.zip"
+    # source      = "${data.archive_file.bookLambdaArchive.output_path}"
+}
 resource "aws_lambda_permission" "apiCreateRole" {
   statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
@@ -41,17 +52,29 @@ resource "aws_lambda_permission" "apiGetRole" {
 }
 
 resource aws_lambda_function createBooking {
-    name    = "${var.app_name}_createBooking"
-    handler = "handler.createBooking"
-    runtime = "nodejs8.10"
+    function_name = "${var.app_name}_createBooking"
 
+    # Deployment information
+    s3_bucket       = "${aws_s3_bucket_object.bookingLambdaPackage.bucket}"
+    s3_key          = "${aws_s3_bucket_object.bookingLambdaPackage.key}"
+    handler = "handler.createBooking"
+
+    # Lambda Configuration
+    timeout = 60
+    runtime = "nodejs8.10"
     role = "${aws_iam_role.lambda_role.arn}"
 }
 
 resource aws_lambda_function getBookings {
-    name    = "${var.app_name}_getBookings"
-    handler = "handler.getBookings"
-    runtime = "nodejs8.10"
+    function_name = "${var.app_name}_getBookings"
 
+    # Deployment information
+    s3_bucket       = "${aws_s3_bucket_object.bookingLambdaPackage.bucket}"
+    s3_key          = "${aws_s3_bucket_object.bookingLambdaPackage.key}"
+    handler = "handler.getBookings"
+
+    # Lambda Configuration
+    timeout = 60
+    runtime = "nodejs8.10"
     role = "${aws_iam_role.lambda_role.arn}"
 }
