@@ -19,7 +19,7 @@ EOF
 }
 
 resource "aws_s3_bucket" "bookingLambdaBucket" {
-    bucket      = "${var.app_name}-deployment-bucket"
+    bucket      = "${lower(var.app_name)}-deployment-bucket"
     acl         = "private"
 }
 

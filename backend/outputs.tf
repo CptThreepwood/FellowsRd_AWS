@@ -7,5 +7,5 @@ output "cognito_pool_endpoint" {
 }
 
 output "cognito_pool_arn" {
-  value = "${aws_cognito_user_pool.users.endpoint}"
+  value = "${aws_cognito_user_pool.users.arn}"
 }
