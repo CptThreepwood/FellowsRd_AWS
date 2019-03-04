@@ -62,6 +62,9 @@ export default class extends React.Component {
       <div>
         <SignInDialog
           updateAuth={this.props.updateAuth} />
+        <RegisterDialog
+          updateAuth={this.props.updateAuth}
+          />
         <div class="splashSlides">
           <Slider {...settings}>
             {(window.innerWidth > 1440) ? (

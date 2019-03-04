@@ -13,14 +13,14 @@ const floating_style = {
   marginLeft: '-55px',
   zIndex: 1,
   position: 'fixed',
-  marginTop: '70vh',
+  marginTop: '80vh',
 };
 
 function Transition(props) {
   return <Slide direction="down" {...props} />;
 }
 
-export default class SignInDialog extends React.Component {
+export default class RegisterDialog extends React.Component {
   constructor(props) {
     super(props);
 
@@ -31,6 +31,7 @@ export default class SignInDialog extends React.Component {
     };
     this.email = React.createRef();
     this.password = React.createRef();
+    this.confirmPassword = React.createRef();
   }
 
   handleChange = name => event => {
@@ -78,14 +79,14 @@ export default class SignInDialog extends React.Component {
           icon={<AccountCircle/>}
           style={floating_style}
           onClick={this.handleOpen}
-        >Sign In</Button>
+        >Register</Button>
         <Dialog
           TransitionComponent={Transition}
           open={this.state.open}
           onClose={this.handleCancel}
           onBackdropClick={this.handleCancel}
         >
-          <DialogTitle>Sign In</DialogTitle>
+          <DialogTitle>Register</DialogTitle>
           <DialogContent>
             <TextField
               label="Email"
@@ -100,6 +101,14 @@ export default class SignInDialog extends React.Component {
               label="Password"
               value={this.state.password}
               onChange={this.handleChange('password')}
+              margin="dense"
+              fullWidth
+            />
+            <TextField
+              type='password'
+              label="Confirm Password"
+              value={this.state.password}
+              onChange={this.handleChange('confirmPassword')}
               margin="dense"
               fullWidth
             />

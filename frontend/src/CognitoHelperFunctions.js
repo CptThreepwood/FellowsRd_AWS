@@ -1,4 +1,4 @@
-import { CognitoUserPool, AuthenticationDetails, CognitoUser } from 'amazon-cognito-identity-js';
+import { CognitoUserPool, AuthenticationDetails, CognitoUser, CognitoUserAttribute } from 'amazon-cognito-identity-js';
 import { config } from './config'
 
 let userPool = new CognitoUserPool({
@@ -11,7 +11,7 @@ let createCognitoUser = (email) => new CognitoUser({
   Pool: userPool
 });
 
-let toUsername = (email) => email.replace('@', '-at-')
+const toUsername = (email) => email.replace('@', '-at-')
 
 function signIn(email, password, onSuccess, onFailure) {
   const authenticationDetails = new AuthenticationDetails({
@@ -28,6 +28,22 @@ function signIn(email, password, onSuccess, onFailure) {
   );
 }
 
+function register(email, displayName, password, onSuccess, onFailure) {
+  const attributeList = [
+    new CognitoUserAttribute({Name: 'email', Value: email}),
+    new CognitoUserAttribute({Name: 'displayName', Value: displayName})
+  ];
+
+  userPool.signUp(
+    email, password, attributeList, null,
+    (err, result) => err ? onFailure(err) : onSuccess(result)
+  );
+}
+
+function forgotPassword(email, onSuccess, onFailure) {
+
+}
+
 export {
-  signIn
+  signIn, register
 }
