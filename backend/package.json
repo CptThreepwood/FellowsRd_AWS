@@ -1,13 +1,14 @@
 {
-  "name": "bookingBackend",
+  "name": "booking_backend",
   "version": "1.0.0",
   "main": "handler.js",
   "license": "MIT",
   "private": true,
   "scripts": {
+    "setup_test": "",
     "test": "echo \"Error: no test specified\" && exit 1",
     "deploy": "terraform apply",
-    "build": "zip ./build/currentBuild.zip -r index.js src/* templates/* node_modules",
+    "build": "zip ./build/currentBuild.zip -r handler.js src/* templates/* node_modules",
     "taint": "terraform taint aws_s3_bucket_object.bookingLambdaPackage && terraform taint aws_lambda_function.createBooking && terraform taint aws_lambda_function.getBookings",
     "redeploy": "yarn build && yarn taint && yarn deploy"
   },

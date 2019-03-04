@@ -36,7 +36,7 @@ function recordBooking(bookingId, username, bookingData, ddb) {
   }).promise();
 }
 
-export {
+module.exports = {
   retrieveBookings,
   recordBooking
 }

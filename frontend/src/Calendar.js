@@ -22,8 +22,8 @@ class BookingCalendar extends Component {
       method: 'POST',
       credentials: 'omit',
       headers: {
-          Authorization: this.props.authDetails.idToken.jwtToken,
-        },
+        Authorization: this.props.authDetails.idToken.jwtToken,
+      },
       body: JSON.stringify({
         startDate: start.toDateString(),
         endDate: end.toDateString(),

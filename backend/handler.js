@@ -1,8 +1,8 @@
 'use strict';
 
-import {retrieveBookings, recordBooking} from 'src/databaseOps';
-import AWS from 'aws-sdk';
-import uuid from 'uuid/v1';
+const AWS = require('aws-sdk');
+const uuid = require('uuid/v1');
+const databaseOps = require('src/databaseOps');
 
 const ddb = new AWS.DynamoDB.DocumentClient();
 
@@ -22,7 +22,7 @@ module.exports.createBooking = (event, context, callback) => {
   const requestBody = JSON.parse(event.body);
   const username = event.requestContext.authorizer.claims['cognito:username'];
   
-  recordBooking(bookingId, username, requestBody, ddb).then(
+  databaseOps.recordBooking(bookingId, username, requestBody, ddb).then(
     () => {
       callback(null, {
         "statusCode": 201,
@@ -56,7 +56,7 @@ module.exports.getBookings = (event, context, callback) => {
   console.log('Received event: ', event);
   const requestBody = JSON.parse(event.body);
 
-  retrieveBookings(requestBody, ddb).then(
+  databaseOps.retrieveBookings(requestBody, ddb).then(
     (data) => {
       const responseBody = data.filter(
         item => item.Count > 0
