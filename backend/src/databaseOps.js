@@ -23,14 +23,11 @@ function recordBooking(bookingId, username, bookingData, ddb) {
   return ddb.put({
     TableName: 'FellowsRdBookings',
     Item: {
-      BookingId: bookingId,
-      UserId: username,
-      BunkRoom: bookingData.bunkRoom,
-      GAndM: bookingData.GAndM,
-      Rufus: bookingData.rufus,
-      BackRoom: bookingData.backRoom,
-      StartDate: bookingData.startDate,
-      EndDate: bookingData.endDate,
+      bookingId: bookingId,
+      userId: username,
+      rooms: [...bookingData.rooms],
+      startDate: bookingData.startDate,
+      endDate: bookingData.endDate,
       nPeople: bookingData.nPeople
     },
   }).promise();
