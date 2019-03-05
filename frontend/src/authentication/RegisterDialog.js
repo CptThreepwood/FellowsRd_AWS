@@ -4,7 +4,7 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import {signIn, forgotPassword} from './CognitoHelperFunctions'
+import {register} from './CognitoHelperFunctions'
 import { DialogTitle, DialogActions, DialogContent } from '@material-ui/core';
 import Slide from '@material-ui/core/Slide';
 

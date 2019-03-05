@@ -1,5 +1,7 @@
-import BookingCalendar from './Calendar.js'
-import SplashSlides from './SplashSlides.js'
+import BookingCalendar from './calendar/Calendar.js'
+import SplashSlides from './slideShow/SplashSlides.js'
+import SignInDialog from './authentication/SignInDialog';
+import RegisterDialog from './authentication/RegisterDialog';
 import React, { Component } from 'react';
 import './App.css';
 
@@ -33,8 +35,11 @@ class App extends Component {
     } else {
       return (
         <div className="App">
-            <SplashSlides
-              updateAuth={this.updateAuth} />
+          <div class="slideShowContainer">
+            <SignInDialog updateAuth={this.props.updateAuth} />
+            <RegisterDialog updateAuth={this.props.updateAuth} />
+            <SplashSlides updateAuth={this.updateAuth} />
+          </div>
         </div>
       );
     }

@@ -11,6 +11,7 @@ import {
   Card, CardActions, CardContent, CardHeader,
   Paper, Grid, TextField, Typography
 } from '@material-ui/core';
+import {config} from './config';
 
 
 class BookingCalendar extends Component {
@@ -18,7 +19,7 @@ class BookingCalendar extends Component {
     // Get URL from config TODO
     var start = new Date(year, 0, 1);
     var end = new Date(year + 1, 0, 1);
-    return fetch('https://iuhpb83475.execute-api.ap-southeast-2.amazonaws.com/dev' + '/booking/get', {
+    return fetch(config.api.invokeUrl + '/booking/get', {
       method: 'POST',
       credentials: 'omit',
       headers: {

@@ -1,6 +1,5 @@
 import React from 'react';
 import Slider from 'react-slick';
-import SignInDialog from './SignInDialog';
 
 import './slick.css';
 import './slick-theme.css';
@@ -59,38 +58,31 @@ export default class extends React.Component {
     };
 
     return (
-      <div>
-        <SignInDialog
-          updateAuth={this.props.updateAuth} />
-        <RegisterDialog
-          updateAuth={this.props.updateAuth}
-          />
-        <div class="splashSlides">
-          <Slider {...settings}>
-            {(window.innerWidth > 1440) ? (
-              <div> <img alt={''} src={process.env.PUBLIC_URL + highest + opening_image} style={image_style} /> </div>
-            ) : ( (window.innerWidth > 1200) ? (
-                <div> <img alt={''} src={process.env.PUBLIC_URL + medium + opening_image} style={image_style} /> </div>
-              ) : (
-                <div> <img alt={''} src={process.env.PUBLIC_URL + lowest + opening_image} style={image_style} /> </div>
-              )
-            )}
-            {
-              images.map(
-                url => {return(
-                  (window.innerWidth > 1440) ? (
-                    <div> <img alt={''} src={process.env.PUBLIC_URL + highest + url} style={image_style} /> </div>
-                  ) : ( (window.innerWidth > 1200) ? (
-                      <div> <img alt={''} src={process.env.PUBLIC_URL + medium + url} style={image_style} /> </div>
-                    ) : (
-                      <div> <img alt={''} src={process.env.PUBLIC_URL + lowest + url} style={image_style} /> </div>
-                    )
+      <div class="splashSlides">
+        <Slider {...settings}>
+          {(window.innerWidth > 1440) ? (
+            <div> <img alt={''} src={process.env.PUBLIC_URL + highest + opening_image} style={image_style} /> </div>
+          ) : ( (window.innerWidth > 1200) ? (
+              <div> <img alt={''} src={process.env.PUBLIC_URL + medium + opening_image} style={image_style} /> </div>
+            ) : (
+              <div> <img alt={''} src={process.env.PUBLIC_URL + lowest + opening_image} style={image_style} /> </div>
+            )
+          )}
+          {
+            images.map(
+              url => {return(
+                (window.innerWidth > 1440) ? (
+                  <div> <img alt={''} src={process.env.PUBLIC_URL + highest + url} style={image_style} /> </div>
+                ) : ( (window.innerWidth > 1200) ? (
+                    <div> <img alt={''} src={process.env.PUBLIC_URL + medium + url} style={image_style} /> </div>
+                  ) : (
+                    <div> <img alt={''} src={process.env.PUBLIC_URL + lowest + url} style={image_style} /> </div>
                   )
-                )}
-              )
-            }
-          </Slider>
-        </div>
+                )
+              )}
+            )
+          }
+        </Slider>
       </div>
     );
   }
