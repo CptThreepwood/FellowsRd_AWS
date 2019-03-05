@@ -1,7 +1,10 @@
 # See https://help.github.com/ignore-files/ for more about ignoring files.
 
-# terraform build artifacts
-*.tstate.backup
+# react-scripts build artifacts
+.cache/
+
+# secrets (integrate into terraform later)
+*config.js
 
 # dependencies
 /node_modules

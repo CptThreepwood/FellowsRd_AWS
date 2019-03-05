@@ -5,4 +5,7 @@ node_modules
 
 ## Build Dir
 backend/build
+backend/.terraform
 
+# terraform build artifacts
+*.tfstate.backup
