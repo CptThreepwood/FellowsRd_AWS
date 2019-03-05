@@ -131,26 +131,23 @@ class BookingCalendar extends Component {
 
   makeBooking(bookingData) {
     // Get URL from config TODO
-    return this.setState({isLoading: true}).then(
-      fetch(
-        'https://iuhpb83475.execute-api.ap-southeast-2.amazonaws.com/dev' + '/booking/create', {
-        method: 'POST',
-        credentials: 'omit',
-        headers: {
-            Authorization: this.props.authDetails.idToken.jwtToken,
-          },
-        body: JSON.stringify(bookingData),
-        contentType: 'application/json',
-        mode: 'cors',
-        }
-      )
+    return fetch( config.api.invokeUrl + '/booking/create', {
+      method: 'POST',
+      credentials: 'omit',
+      headers: {
+        Authorization: this.props.authDetails.idToken.jwtToken,
+      },
+      body: JSON.stringify(bookingData),
+      contentType: 'application/json',
+      mode: 'cors',
+      }
     ).then(this.renderBookings);
   }
 
   startBooking(bookingData) {
     this.setState({
       isLoading: true
-    }, this.makeBooking(bookingData))
+    }, () => this.makeBooking(bookingData))
   }
 
   render() {
@@ -257,7 +254,7 @@ class BookingCalendar extends Component {
                         label="Number of People"
                         value={this.state.nPeople}
                         onChange={event => this.setState({
-                          nPeople: event.target.value()
+                          nPeople: event.target.value
                         })}
                         />
                         <Button
@@ -265,7 +262,7 @@ class BookingCalendar extends Component {
                           color="secondary"
                           style={bookButtonStyle}
                           onClick={
-                            this.makeBooking({
+                            () => this.startBooking({
                               StartDate: this.state.selectedRange[0],
                               EndDate: this.state.selectedRange[1],
                               nPeople: this.state.nPeople
