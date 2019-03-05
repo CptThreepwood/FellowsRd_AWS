@@ -57,5 +57,5 @@ function verifyNewPassword(email, password, verificationCode, onSuccess, onFailu
 }
 
 export {
-  signIn, register
+  signIn, register, forgotPassword, verifyNewPassword
 }

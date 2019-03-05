@@ -5,7 +5,7 @@ import Button from '@material-ui/core/Button';
 import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import {signIn, forgotPassword} from './CognitoHelperFunctions'
-import { DialogTitle, DialogActions, DialogContent } from '@material-ui/core';
+import { DialogTitle, DialogActions, DialogContent, Typography } from '@material-ui/core';
 import Slide from '@material-ui/core/Slide';
 
 const floating_style = {
@@ -28,6 +28,7 @@ export default class SignInDialog extends React.Component {
       open: false,
       email: '',
       password: '',
+      message: '',
     };
     this.email = React.createRef();
     this.password = React.createRef();
@@ -50,13 +51,13 @@ export default class SignInDialog extends React.Component {
     }
     const signinFailure = (err) => {
       console.log(err);
-      alert(err.message);
+      this.setState({message: err.message});
     }
     if (this.state.email && this.state.password) {
       signIn(
         this.state.email, this.state.password,
         signinSuccess, signinFailure
-      )
+      );
     }
   };
 
@@ -65,6 +66,20 @@ export default class SignInDialog extends React.Component {
       open: false,
       password: ''
     });
+  }
+
+  handleForgot = () => {
+    const forgotSuccess = (result) => {
+      console.log(result);
+    }
+    const forgotFailure = (err) => {
+      console.log(err);
+    }
+    forgotPassword(
+      this.state.email,
+      forgotSuccess,
+      forgotFailure,
+    );
   }
 
   render() {
@@ -87,6 +102,7 @@ export default class SignInDialog extends React.Component {
         >
           <DialogTitle>Sign In</DialogTitle>
           <DialogContent>
+            <Typography>{this.state.message}</Typography>
             <TextField
               label="Email"
               autoFocus
@@ -105,6 +121,9 @@ export default class SignInDialog extends React.Component {
             />
           </DialogContent>
           <DialogActions>
+            <Button color="primary"  onClick={this.handleForgot}>
+              Forgot Password
+            </Button>
             <Button color="primary"  onClick={this.handleCancel}>
               Cancel
             </Button>
