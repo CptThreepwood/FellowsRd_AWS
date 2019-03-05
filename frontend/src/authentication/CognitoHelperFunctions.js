@@ -41,7 +41,19 @@ function register(email, displayName, password, onSuccess, onFailure) {
 }
 
 function forgotPassword(email, onSuccess, onFailure) {
+  let cognitoUser = createCognitoUser(email);
+  cognitoUser.forgotPassword({
+    onSuccess: onSuccess,
+    onFailure: onFailure,
+  });
+}
 
+function verifyNewPassword(email, password, verificationCode, onSuccess, onFailure) {
+  let cognitoUser = createCognitoUser(email);
+  cognitoUser.confirmPassword(
+    verificationCode, password,
+    onSuccess, onFailure,
+  );
 }
 
 export {
