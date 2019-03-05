@@ -28,6 +28,7 @@ export default class RegisterDialog extends React.Component {
       open: false,
       email: '',
       password: '',
+      confirmPassword: '',
     };
     this.email = React.createRef();
     this.password = React.createRef();
@@ -45,18 +46,21 @@ export default class RegisterDialog extends React.Component {
   };
 
   handleClose = () => {
-    const signinSuccess = (result) => {
+    const registerSuccess = (result) => {
       this.props.updateAuth(result);
       this.setState({open: false});
     }
-    const signinFailure = (err) => {
+    const registerFailure = (err) => {
       console.log(err);
       alert(err.message);
     }
-    if (this.state.email && this.state.password) {
-      signIn(
+    if (this.state.password != this.state.confirmPassword) {
+      alert('Passwords do not match');
+    }
+    else if (this.state.email && this.state.password) {
+      register(
         this.state.email, this.state.password,
-        signinSuccess, signinFailure
+        registerSuccess, registerFailure
       )
     }
   };
@@ -64,7 +68,8 @@ export default class RegisterDialog extends React.Component {
   handleCancel = () => {
     this.setState({
       open: false,
-      password: ''
+      password: '',
+      confirmPassword: '',
     });
   }
 
@@ -107,14 +112,14 @@ export default class RegisterDialog extends React.Component {
             <TextField
               type='password'
               label="Confirm Password"
-              value={this.state.password}
+              value={this.state.confirmPassword}
               onChange={this.handleChange('confirmPassword')}
               margin="dense"
               fullWidth
             />
           </DialogContent>
           <DialogActions>
-            <Button color="primary"  onClick={this.handleCancel}>
+            <Button color="primary" onClick={this.handleCancel}>
               Cancel
             </Button>
             <Button color="primary" keyboardFocused={true} onClick={this.handleClose}>
