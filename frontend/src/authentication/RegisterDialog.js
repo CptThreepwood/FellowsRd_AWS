@@ -2,19 +2,9 @@ import React from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
-import AccountCircle from '@material-ui/icons/AccountCircle';
 import {register} from './CognitoHelperFunctions'
 import { DialogTitle, DialogActions, DialogContent } from '@material-ui/core';
 import Slide from '@material-ui/core/Slide';
-
-const floating_style = {
-  width: '110px',
-  marginLeft: '-55px',
-  zIndex: 1,
-  position: 'fixed',
-  marginTop: '80vh',
-};
 
 function Transition(props) {
   return <Slide direction="down" {...props} />;
@@ -25,14 +15,9 @@ export default class RegisterDialog extends React.Component {
     super(props);
 
     this.state = {
-      open: false,
-      email: '',
-      password: '',
-      confirmPassword: '',
+      email: this.props.email,
     };
     this.email = React.createRef();
-    this.password = React.createRef();
-    this.confirmPassword = React.createRef();
   }
 
   handleChange = name => event => {
@@ -41,79 +26,43 @@ export default class RegisterDialog extends React.Component {
     });
   };
 
-  handleOpen = () => {
-    this.setState({open: true});
-  };
-
   handleClose = () => {
     const registerSuccess = (result) => {
-      this.props.updateAuth(result);
-      this.setState({open: false});
+      this.props.finalise({email: this.state.email});
     }
+
     const registerFailure = (err) => {
       console.log(err);
       alert(err.message);
     }
-    if (this.state.password != this.state.confirmPassword) {
-      alert('Passwords do not match');
-    }
-    else if (this.state.email && this.state.password) {
-      register(
-        this.state.email, this.state.password,
-        registerSuccess, registerFailure
-      )
+
+    if (this.state.email) {
+      register(this.state.email, registerSuccess, registerFailure)
     }
   };
 
   handleCancel = () => {
-    this.setState({
-      open: false,
-      password: '',
-      confirmPassword: '',
-    });
+    this.props.finalise();
   }
 
   render() {
 
     return (
       <div>
-      <MuiThemeProvider>
-        <Button
-          variant="contained"
-          color="primary"
-          icon={<AccountCircle/>}
-          style={floating_style}
-          onClick={this.handleOpen}
-        >Register</Button>
         <Dialog
           TransitionComponent={Transition}
-          open={this.state.open}
+          open={this.props.open}
           onClose={this.handleCancel}
           onBackdropClick={this.handleCancel}
+          aria-labelledby="confirmation-dialog-title"
         >
-          <DialogTitle>Register</DialogTitle>
+          <DialogTitle id="confirmation-dialog-title">Register</DialogTitle>
           <DialogContent>
             <TextField
               label="Email"
               autoFocus
               value={this.state.email}
               onChange={this.handleChange('email')}
-              margin="dense"
-              fullWidth
-            />
-            <TextField
-              type='password'
-              label="Password"
-              value={this.state.password}
-              onChange={this.handleChange('password')}
-              margin="dense"
-              fullWidth
-            />
-            <TextField
-              type='password'
-              label="Confirm Password"
-              value={this.state.confirmPassword}
-              onChange={this.handleChange('confirmPassword')}
               margin="dense"
               fullWidth
             />
@@ -127,7 +76,6 @@ export default class RegisterDialog extends React.Component {
             </Button>
           </DialogActions>
         </Dialog>
-      </MuiThemeProvider>
       </div>
     );
   }

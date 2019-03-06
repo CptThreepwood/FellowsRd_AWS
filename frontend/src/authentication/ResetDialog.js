@@ -2,25 +2,27 @@ import React from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import {signIn} from './CognitoHelperFunctions'
-import { DialogTitle, DialogActions, DialogContent, Typography } from '@material-ui/core';
+import {verifyNewPassword} from './CognitoHelperFunctions'
+import { DialogTitle, DialogActions, DialogContent } from '@material-ui/core';
 import Slide from '@material-ui/core/Slide';
 
 function Transition(props) {
   return <Slide direction="down" {...props} />;
 }
 
-export default class SignInDialog extends React.Component {
+export default class ResetDialog extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      email: '',
+      email: this.props.email,
+      code: '',
       password: '',
-      message: '',
+      confirmPassword: '',
     };
-    this.email = React.createRef();
+    this.code = React.createRef();
     this.password = React.createRef();
+    this.confirmPassword = React.createRef();
   }
 
   handleChange = name => event => {
@@ -30,32 +32,38 @@ export default class SignInDialog extends React.Component {
   };
 
   handleClose = () => {
-    const signinSuccess = (result) => {
+    const resetSuccess = (result) => {
       this.props.updateAuth(result);
       this.props.finalise();
     }
-    const signinFailure = (err) => {
+
+    const resetFailure = (err) => {
       console.log(err);
-      this.setState({message: err.message});
+      alert(err.message);
     }
-    if (this.state.email && this.state.password) {
-      signIn(
+
+    if (this.state.password != this.state.confirmPassword) {
+      resetFailure({message: 'Passwords do not match'});
+    }
+    else if (this.state.email && this.state.password) {
+      verifyNewPassword(
         this.state.email, this.state.password,
-        signinSuccess, signinFailure
-      );
+        resetSuccess, resetFailure
+      )
     }
   };
 
   handleCancel = () => {
-    this.setState({password: ''});
+    this.setState({
+      code: '',
+      password: '',
+      confirmPassword: '',
+    });
     this.props.finalise();
   }
 
-  handleRegister = () => {
-    this.props.finalise({email: this.state.email});
-  }
-
   render() {
+
     return (
       <div>
         <Dialog
@@ -65,14 +73,20 @@ export default class SignInDialog extends React.Component {
           onBackdropClick={this.handleCancel}
           aria-labelledby="confirmation-dialog-title"
         >
-          <DialogTitle id="confirmation-dialog-title">Sign In</DialogTitle>
+          <DialogTitle id="confirmation-dialog-title">Set Password</DialogTitle>
           <DialogContent>
-            <Typography>{this.state.message}</Typography>
             <TextField
+              disabled
               label="Email"
+              defaultValue={this.props.email}
+              margin="dense"
+              fullWidth
+            />
+            <TextField
+              label="Verification Code"
               autoFocus
-              value={this.state.email}
-              onChange={this.handleChange('email')}
+              value={this.state.code}
+              onChange={this.handleChange('code')}
               margin="dense"
               fullWidth
             />
@@ -84,12 +98,17 @@ export default class SignInDialog extends React.Component {
               margin="dense"
               fullWidth
             />
+            <TextField
+              type='password'
+              label="Confirm Password"
+              value={this.state.confirmPassword}
+              onChange={this.handleChange('confirmPassword')}
+              margin="dense"
+              fullWidth
+            />
           </DialogContent>
           <DialogActions>
-            <Button color="primary"  onClick={this.handleRegister}>
-              Register/Reset
-            </Button>
-            <Button color="primary"  onClick={this.handleCancel}>
+            <Button color="primary" onClick={this.handleCancel}>
               Cancel
             </Button>
             <Button color="primary" keyboardFocused={true} onClick={this.handleClose}>
