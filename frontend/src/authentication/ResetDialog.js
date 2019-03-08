@@ -3,7 +3,7 @@ import Dialog from '@material-ui/core/Dialog';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import {verifyNewPassword} from './CognitoHelperFunctions'
-import { DialogTitle, DialogActions, DialogContent } from '@material-ui/core';
+import { DialogTitle, DialogActions, DialogContent, Typography } from '@material-ui/core';
 import Slide from '@material-ui/core/Slide';
 
 function Transition(props) {
@@ -19,6 +19,7 @@ export default class ResetDialog extends React.Component {
       code: '',
       password: '',
       confirmPassword: '',
+      message: 'Enter your new password and the confirmation code sent to this email address'
     };
     this.code = React.createRef();
     this.password = React.createRef();
@@ -39,7 +40,7 @@ export default class ResetDialog extends React.Component {
 
     const resetFailure = (err) => {
       console.log(err);
-      alert(err.message);
+      this.setState({message: err.message});
     }
 
     if (this.state.password != this.state.confirmPassword) {
@@ -75,6 +76,7 @@ export default class ResetDialog extends React.Component {
         >
           <DialogTitle id="confirmation-dialog-title">Set Password</DialogTitle>
           <DialogContent>
+            <Typography>{this.state.message}</Typography>
             <TextField
               disabled
               label="Email"

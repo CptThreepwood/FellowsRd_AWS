@@ -6,6 +6,10 @@ output "cognito_pool_endpoint" {
   value = "${aws_cognito_user_pool.users.endpoint}"
 }
 
-output "cognito_pool_arn" {
-  value = "${aws_cognito_user_pool.users.arn}"
+output "cognito_pool_id" {
+  value = "${aws_cognito_user_pool.users.id}"
+}
+
+output "frontent_client_id" {
+  value = "${aws_cognito_user_pool_client.id}"
 }

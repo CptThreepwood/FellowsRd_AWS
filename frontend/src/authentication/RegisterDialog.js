@@ -3,7 +3,7 @@ import Dialog from '@material-ui/core/Dialog';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import {register} from './CognitoHelperFunctions'
-import { DialogTitle, DialogActions, DialogContent } from '@material-ui/core';
+import { DialogTitle, DialogActions, DialogContent, Typography } from '@material-ui/core';
 import Slide from '@material-ui/core/Slide';
 
 function Transition(props) {
@@ -16,6 +16,7 @@ export default class RegisterDialog extends React.Component {
 
     this.state = {
       email: this.props.email,
+      message: 'Email account to register or reset',
     };
     this.email = React.createRef();
   }
@@ -33,7 +34,7 @@ export default class RegisterDialog extends React.Component {
 
     const registerFailure = (err) => {
       console.log(err);
-      alert(err.message);
+      this.setState({message: err.message});
     }
 
     if (this.state.email) {
@@ -58,6 +59,7 @@ export default class RegisterDialog extends React.Component {
         >
           <DialogTitle id="confirmation-dialog-title">Register</DialogTitle>
           <DialogContent>
+            <Typography>{this.state.message}</Typography>
             <TextField
               label="Email"
               autoFocus

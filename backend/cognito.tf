@@ -10,14 +10,11 @@ resource "aws_cognito_user_pool" "users" {
     require_uppercase = false
   }
 
-  schema = {
-    name = "displayName"
-    attribute_data_type = "String"
-
-    developer_only_attribute    = false
-    mutable                     = true
-    # required                    = true
-  }
-
   email_verification_subject = "Welcome to Fellows Rd"
+}
+
+resource aws_cognito_user_pool_client "frontendClient" {
+  name = "frontendClient"
+
+  user_pool_id = "${aws_cognito_user_pool.users.id}"
 }

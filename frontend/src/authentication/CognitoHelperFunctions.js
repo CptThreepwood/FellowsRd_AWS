@@ -28,14 +28,19 @@ function signIn(email, password, onSuccess, onFailure) {
   );
 }
 
-function register(email, displayName, password, onSuccess, onFailure) {
+function register(email, onSuccess, onFailure) {
+  const displayName = email.split('@')[0];
   const attributeList = [
     new CognitoUserAttribute({Name: 'email', Value: email}),
-    new CognitoUserAttribute({Name: 'displayName', Value: displayName})
+    new CognitoUserAttribute({Name: 'preferred_username', Value: displayName})
   ];
 
+  // Create a temporary password from a random ASCII string
+  const temp_password = String.fromCharCode(...Array.from('test_password').map(
+    () => Math.floor(Math.random() * 93 + 33))
+  )
   userPool.signUp(
-    email, password, attributeList, null,
+    email, temp_password, attributeList, null,
     (err, result) => err ? onFailure(err) : onSuccess(result)
   );
 }
