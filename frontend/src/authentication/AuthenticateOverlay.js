@@ -23,60 +23,26 @@ export default class AuthenticateOverlay extends React.Component {
       renderAuth: true,
       signInOpen: false,
       registerOpen: false,
-      registerEmail: '',
       resetOpen: false,
-      resetEmail: '',
+      currentEmail: '',
     }
+  }
+
+  handleEmailChange = (email) => {
+    this.setState({email});
   }
 
   openSignIn = () => {
+    this.handleDialog({signIn: true})
+  }
+
+  handleDialog = (data = {}) => {
+    const {signIn, register, reset} = data;
     this.setState({
-      signInOpen: true,
-      registerOpen: false,
-      resetOpen: false,
-    })
-  }
-
-  closeSignIn = (data={}) => {
-    if (Object.keys(data).length) {
-      this.setState({
-        signInOpen: false,
-        registerOpen: true,
-        resetOpen: false,
-        registerEmail: data.email || ''
-      })
-    } else {
-      this.setState({
-        signInOpen: false,
-        registerOpen: false,
-        resetOpen: false,
-      })
-    }
-  }
-
-  closeRegister = (data={}) => {
-    if (Object.keys(data).length) {
-      this.setState({
-        registerOpen: false,
-        resetOpen: true,
-        resetOpen: false,
-        resetEmail: data.email || ''
-      })
-    } else {
-      this.setState({
-        signInOpen: false,
-        registerOpen: false,
-        resetOpen: false,
-      })
-    }
-  }
-
-  closeReset = () => {
-    this.setState({
-      signInOpen: false,
-      registerOpen: false,
-      resetOpen: false,
-    })
+      signInOpen: signIn || false,
+      registerOpen: register || false,
+      resetOpen: reset || false,
+    });
   }
 
   render() {
@@ -92,19 +58,23 @@ export default class AuthenticateOverlay extends React.Component {
           >Sign In</Button>
           <SignInDialog
             open={this.state.signInOpen}
+            email={this.state.email}
+            updateEmail={this.handleEmailChange}
             updateAuth={this.props.updateAuth}
-            finalise={this.closeSignIn}
+            finalise={this.handleDialog}
           />
           <RegisterDialog
             open={this.state.registerOpen}
-            email={this.state.registerEmail}
-            finalise={this.closeRegister}
+            email={this.state.email}
+            updateEmail={this.handleEmailChange}
+            finalise={this.handleDialog}
           />
           <ResetDialog
             open={this.state.resetOpen}
-            email={this.state.resetEmail}
+            email={this.state.email}
+            updateEmail={this.handleEmailChange}
             updateAuth={this.props.updateAuth}
-            finalise={this.closeReset}
+            finalise={this.handleDialog}
           />
         </MuiThemeProvider>
       </div>

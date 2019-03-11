@@ -15,7 +15,6 @@ export default class ResetDialog extends React.Component {
     super(props);
 
     this.state = {
-      email: this.props.email,
       code: '',
       password: '',
       confirmPassword: '',
@@ -27,15 +26,19 @@ export default class ResetDialog extends React.Component {
   }
 
   handleChange = name => event => {
-    this.setState({
-      [name]: event.target.value,
-    });
+    if (name == 'email') {
+      this.props.updateEmail(event.target.value)
+    } else {
+      this.setState({
+        [name]: event.target.value,
+      });
+    }
   };
 
   handleClose = () => {
     const resetSuccess = (result) => {
       this.props.updateAuth(result);
-      this.props.finalise();
+      this.props.finalise({});
     }
 
     const resetFailure = (err) => {
@@ -46,9 +49,9 @@ export default class ResetDialog extends React.Component {
     if (this.state.password != this.state.confirmPassword) {
       resetFailure({message: 'Passwords do not match'});
     }
-    else if (this.state.email && this.state.password) {
+    else if (this.props.email && this.state.password) {
       verifyNewPassword(
-        this.state.email, this.state.password,
+        this.props.email, this.state.password,
         resetSuccess, resetFailure
       )
     }
@@ -60,11 +63,10 @@ export default class ResetDialog extends React.Component {
       password: '',
       confirmPassword: '',
     });
-    this.props.finalise();
+    this.props.finalise({});
   }
 
   render() {
-
     return (
       <div>
         <Dialog

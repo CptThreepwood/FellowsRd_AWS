@@ -15,44 +15,48 @@ export default class SignInDialog extends React.Component {
     super(props);
 
     this.state = {
-      email: '',
       password: '',
       message: '',
     };
-    this.email = React.createRef();
     this.password = React.createRef();
   }
 
   handleChange = name => event => {
-    this.setState({
-      [name]: event.target.value,
-    });
+    if (name == 'email') {
+      this.props.updateEmail(event.target.value)
+    } else {
+      this.setState({
+        [name]: event.target.value,
+      });
+    }
   };
 
   handleClose = () => {
     const signinSuccess = (result) => {
       this.props.updateAuth(result);
-      this.props.finalise();
+      this.props.finalise({});
     }
     const signinFailure = (err) => {
       console.log(err);
       this.setState({message: err.message});
     }
-    if (this.state.email && this.state.password) {
+    if (this.props.email && this.state.password) {
       signIn(
-        this.state.email, this.state.password,
+        this.props.email, this.state.password,
         signinSuccess, signinFailure
       );
+    } else {
+      this.setState({message: 'Invalid email or password'});
     }
   };
 
   handleCancel = () => {
     this.setState({password: ''});
-    this.props.finalise();
+    this.props.finalise({});
   }
 
   handleRegister = () => {
-    this.props.finalise({email: this.state.email});
+    this.props.finalise({register: true});
   }
 
   render() {
@@ -71,7 +75,7 @@ export default class SignInDialog extends React.Component {
             <TextField
               label="Email"
               autoFocus
-              value={this.state.email}
+              value={this.props.email}
               onChange={this.handleChange('email')}
               margin="dense"
               fullWidth

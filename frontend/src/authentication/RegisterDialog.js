@@ -15,21 +15,24 @@ export default class RegisterDialog extends React.Component {
     super(props);
 
     this.state = {
-      email: this.props.email,
       message: 'Email account to register or reset',
     };
-    this.email = React.createRef();
+    console.log(this.state)
   }
 
   handleChange = name => event => {
-    this.setState({
-      [name]: event.target.value,
-    });
+    if (name == 'email') {
+      this.props.updateEmail(event.target.value)
+    } else {
+      this.setState({
+        [name]: event.target.value,
+      });
+    }
   };
 
   handleClose = () => {
     const registerSuccess = (result) => {
-      this.props.finalise({email: this.state.email});
+      this.props.finalise({reset: true});
     }
 
     const registerFailure = (err) => {
@@ -37,8 +40,8 @@ export default class RegisterDialog extends React.Component {
       this.setState({message: err.message});
     }
 
-    if (this.state.email) {
-      register(this.state.email, registerSuccess, registerFailure)
+    if (this.props.email) {
+      register(this.props.email, registerSuccess, registerFailure)
     }
   };
 
@@ -47,7 +50,7 @@ export default class RegisterDialog extends React.Component {
   }
 
   render() {
-
+    console.log(this.state)
     return (
       <div>
         <Dialog
@@ -63,7 +66,7 @@ export default class RegisterDialog extends React.Component {
             <TextField
               label="Email"
               autoFocus
-              value={this.state.email}
+              value={this.props.email}
               onChange={this.handleChange('email')}
               margin="dense"
               fullWidth
