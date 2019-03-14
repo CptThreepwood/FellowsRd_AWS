@@ -25,8 +25,15 @@ export default class ResetDialog extends React.Component {
     this.confirmPassword = React.createRef();
   }
 
+  shouldComponentUpdate(nextProps) {
+    if (!this.props.open && !nextProps.open) {
+      return false;
+    }
+    return true;
+  }
+
   handleChange = name => event => {
-    if (name == 'email') {
+    if (name === 'email') {
       this.props.updateEmail(event.target.value)
     } else {
       this.setState({
@@ -46,7 +53,7 @@ export default class ResetDialog extends React.Component {
       this.setState({message: err.message});
     }
 
-    if (this.state.password != this.state.confirmPassword) {
+    if (this.state.password !== this.state.confirmPassword) {
       resetFailure({message: 'Passwords do not match'});
     }
     else if (this.props.email && this.state.password) {

@@ -1,10 +1,12 @@
 import React from 'react';
+
+import Slide from '@material-ui/core/Slide';
+import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import {register} from './CognitoHelperFunctions'
 import { DialogTitle, DialogActions, DialogContent, Typography } from '@material-ui/core';
-import Slide from '@material-ui/core/Slide';
+
+import { register, forgotPassword} from './CognitoHelperFunctions';
 
 function Transition(props) {
   return <Slide direction="down" {...props} />;
@@ -17,11 +19,17 @@ export default class RegisterDialog extends React.Component {
     this.state = {
       message: 'Email account to register or reset',
     };
-    console.log(this.state)
+  }
+
+  shouldComponentUpdate(nextProps) {
+    if (!this.props.open && !nextProps.open) {
+      return false;
+    }
+    return true;
   }
 
   handleChange = name => event => {
-    if (name == 'email') {
+    if (name === 'email') {
       this.props.updateEmail(event.target.value)
     } else {
       this.setState({

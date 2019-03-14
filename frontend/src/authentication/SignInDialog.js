@@ -21,8 +21,15 @@ export default class SignInDialog extends React.Component {
     this.password = React.createRef();
   }
 
+  shouldComponentUpdate(nextProps) {
+    if (!this.props.open && !nextProps.open) {
+      return false;
+    }
+    return true;
+  }
+
   handleChange = name => event => {
-    if (name == 'email') {
+    if (name === 'email') {
       this.props.updateEmail(event.target.value)
     } else {
       this.setState({
@@ -61,7 +68,6 @@ export default class SignInDialog extends React.Component {
 
   render() {
     return (
-      <div>
         <Dialog
           TransitionComponent={Transition}
           open={this.props.open}
@@ -101,7 +107,6 @@ export default class SignInDialog extends React.Component {
             </Button>
           </DialogActions>
         </Dialog>
-      </div>
     );
   }
 }

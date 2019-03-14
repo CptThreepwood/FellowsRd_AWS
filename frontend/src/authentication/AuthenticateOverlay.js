@@ -20,7 +20,6 @@ export default class AuthenticateOverlay extends React.Component {
     super(props);
 
     this.state = {
-      renderAuth: true,
       signInOpen: false,
       registerOpen: false,
       resetOpen: false,
