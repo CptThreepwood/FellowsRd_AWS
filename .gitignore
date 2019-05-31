@@ -1,11 +1,12 @@
 # Libraries (front and backend)
 node_modules
 
-# Backend ignores
-
-## Build Dir
-backend/build
-backend/.terraform
+# Build Dir
+.terraform
 
 # terraform build artifacts
+*.tfstate
 *.tfstate.backup
+
+# config presets
+app_config.auto.tfvars
