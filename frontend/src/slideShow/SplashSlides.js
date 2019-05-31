@@ -22,9 +22,9 @@ let images = shuffle([
   '/IMG_5136.jpg', '/IMG_5139.jpg', '/IMG_5144.jpg',
 ]);
 
-const lowest = '/960_600_photos';
-const medium = '/1440_900_photos';
-const highest = '/1920_1200_photos';
+const lowest = '960_600';
+const medium = '1440_900';
+const highest = '1920_1200';
 
 const image_style = {
   maxWidth: '100%',
@@ -72,19 +72,19 @@ function Image(url) {
   if (window.innerWidth > 1440) {
     return (
       <div>
-        <img alt={''} src={process.env.PUBLIC_URL + highest + url} style={image_style} />
+        <img alt={''} src={process.env.PUBLIC_URL + '/slides/' + highest + url} style={image_style} />
       </div>
     );
   } else if (window.innerWidth > 1200) {
     return (
       <div>
-        <img alt={''} src={process.env.PUBLIC_URL + medium + url} style={image_style} />
+        <img alt={''} src={process.env.PUBLIC_URL + '/slides/' + medium + url} style={image_style} />
       </div>
     );
   } else {
     return (
       <div>
-        <img alt={''} src={process.env.PUBLIC_URL + lowest + url} style={image_style} />
+        <img alt={''} src={process.env.PUBLIC_URL + '/slides/' + lowest + url} style={image_style} />
       </div>
     );
   }

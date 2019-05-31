@@ -133,7 +133,7 @@ resource "aws_s3_bucket" "bookingLambdaBucket" {
 resource "aws_s3_bucket_object" "bookingLambdaPackage" {
     key         = "${var.app_name}_${var.version}.zip"
     bucket      = "${aws_s3_bucket.bookingLambdaBucket.id}"
-    source      = "build/currentBuild.zip"
+    source      = "${path.module}/build/currentBuild.zip"
     # source      = "${data.archive_file.bookLambdaArchive.output_path}"
 }
 resource "aws_lambda_permission" "apiCreateRole" {

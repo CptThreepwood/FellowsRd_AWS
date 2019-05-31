@@ -11,5 +11,5 @@ output "cognito_pool_id" {
 }
 
 output "frontent_client_id" {
-  value = "${aws_cognito_user_pool_client.id}"
+  value = "${aws_cognito_user_pool_client.frontendClient.id}"
 }
