@@ -5,11 +5,11 @@ resource aws_dynamodb_table booking_table {
     hash_key        = "userID"
     range_key       = "startDate"
 
-    attribute = {
+    attribute {
         name = "userID"
         type = "S"
     }
-    attribute = {
+    attribute {
         name = "startDate"
         type = "S"
     }

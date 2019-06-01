@@ -2,7 +2,7 @@ resource "aws_cognito_user_pool" "users" {
   name = "${var.app_name}_users"
   username_attributes = ["email"]
   
-  password_policy = {
+  password_policy {
     minimum_length    = 8
     require_lowercase = false
     require_numbers   = false

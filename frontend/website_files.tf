@@ -4,6 +4,7 @@ resource aws_s3_bucket_object "index" {
     source  = "${path.module}/build/index.html"
 
     content_type = "text/html"
+    depends_on = [aws_s3_bucket_object.main_js]
 }
 
 resource aws_s3_bucket_object "asset-manifest" {
@@ -12,6 +13,7 @@ resource aws_s3_bucket_object "asset-manifest" {
     source  = "${path.module}/build/asset-manifest.json"
 
     content_type = "application/json"
+    depends_on = [aws_s3_bucket_object.main_js]
 }
 
 resource aws_s3_bucket_object "favicon" {
@@ -20,6 +22,7 @@ resource aws_s3_bucket_object "favicon" {
     source  = "${path.module}/build/favicon.ico"
 
     content_type = "image/x-icon"
+    depends_on = [aws_s3_bucket_object.main_js]
 }
 
 resource aws_s3_bucket_object "manifest" {
@@ -28,6 +31,7 @@ resource aws_s3_bucket_object "manifest" {
     source  = "${path.module}/build/manifest.json"
 
     content_type = "application/json"
+    depends_on = [aws_s3_bucket_object.main_js]
 }
 
 resource aws_s3_bucket_object "service_worker_js" {
@@ -36,36 +40,37 @@ resource aws_s3_bucket_object "service_worker_js" {
     source  = "${path.module}/build/service-worker.js"
 
     content_type = "text/javascript"
+    depends_on = [aws_s3_bucket_object.main_js]
 }
 
 resource aws_s3_bucket_object "main_js" {
     bucket  = "${aws_s3_bucket.website.bucket}"
-    key     = "${var.main_js}"
-    source  = "${path.module}/build/${var.main_js}"
+    key     = "${data.external.build.result.main_js}"
+    source  = "${path.module}/build/${data.external.build.result.main_js}"
 
     content_type = "text/javascript"
 }
 
 resource aws_s3_bucket_object "main_js_map" {
     bucket  = "${aws_s3_bucket.website.bucket}"
-    key     = "${var.main_js_map}"
-    source  = "${path.module}/build/${var.main_js_map}"
+    key     = "${data.external.build.result.main_js_map}"
+    source  = "${path.module}/build/${data.external.build.result.main_js_map}"
 
     content_type = "text/javascript"
 }
 
 resource aws_s3_bucket_object "main_css" {
     bucket  = "${aws_s3_bucket.website.bucket}"
-    key     = "${var.main_css}"
-    source  = "${path.module}/build/${var.main_css}"
+    key     = "${data.external.build.result.main_css}"
+    source  = "${path.module}/build/${data.external.build.result.main_css}"
 
     content_type = "text/css"
 }
 
 resource aws_s3_bucket_object "main_css_map" {
     bucket  = "${aws_s3_bucket.website.bucket}"
-    key     = "${var.main_css_map}"
-    source  = "${path.module}/build/${var.main_css_map}"
+    key     = "${data.external.build.result.main_css_map}"
+    source  = "${path.module}/build/${data.external.build.result.main_css_map}"
 
     content_type = "text/css"
 }

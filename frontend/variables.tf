@@ -2,18 +2,10 @@ variable "site_url" {
     type = "string"
 }
 
-variable "main_js" {
+variable "userPoolId" {
     type = "string"
 }
 
-variable "main_js_map" {
-    type = "string"
-}
-
-variable "main_css" {
-    type = "string"
-}
-
-variable "main_css_map" {
+variable "userPoolWebClientId" {
     type = "string"
 }
