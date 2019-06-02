@@ -1,16 +1,21 @@
 import React from 'react';
-import Dialog from '@material-ui/core/Dialog';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import {signIn} from './CognitoHelperFunctions'
-import { DialogTitle, DialogActions, DialogContent, Typography } from '@material-ui/core';
+
 import Slide from '@material-ui/core/Slide';
+import Dialog from '@material-ui/core/Dialog';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import { DialogTitle, DialogActions, DialogContent, Typography } from '@material-ui/core';
+
+import { AuthContext } from '../AuthContext';
+import { signIn, forgotPassword } from './CognitoHelperFunctions'
 
 function Transition(props) {
   return <Slide direction="down" {...props} />;
 }
 
 export default class SignInDialog extends React.Component {
+  static contextType = AuthContext;
+
   constructor(props) {
     super(props);
 
@@ -39,30 +44,44 @@ export default class SignInDialog extends React.Component {
   };
 
   handleClose = () => {
-    const signinSuccess = (result) => {
-      this.props.updateAuth(result);
-      this.props.finalise({});
-    }
-    const signinFailure = (err) => {
-      console.log(err);
-      this.setState({message: err.message});
-    }
     if (this.props.email && this.state.password) {
       signIn(
         this.props.email, this.state.password,
-        signinSuccess, signinFailure
+      ).then(
+        user => {
+          this.props.updateAuth({
+            attributes: user.attributes,
+            ...user.signInUserSession,
+          });
+          this.props.finalise({});
+        }
+      ).catch(
+        err => {
+          console.log(err);
+          this.setState({message: err.message});
+        }
       );
     } else {
       this.setState({message: 'Invalid email or password'});
     }
   };
 
+  launchReset = () => {
+    this.setState({password: ''});
+    if (this.props.email) {
+      forgotPassword(this.props.email).then(
+        this.props.finalise({reset: true})
+      ).catch(console.log)
+    }
+  }
+
   handleCancel = () => {
     this.setState({password: ''});
     this.props.finalise({});
   }
 
-  handleRegister = () => {
+  launchRegister = () => {
+    this.setState({password: ''});
     this.props.finalise({register: true});
   }
 
@@ -94,10 +113,13 @@ export default class SignInDialog extends React.Component {
               margin="dense"
               fullWidth
             />
+            <Button color="danger" keyboardFocused={true} onClick={this.launchReset}>
+              Reset Password
+            </Button>
           </DialogContent>
           <DialogActions>
-            <Button color="primary"  onClick={this.handleRegister}>
-              Register/Reset
+            <Button color="primary"  onClick={this.launchRegister}>
+              Register
             </Button>
             <Button color="primary"  onClick={this.handleCancel}>
               Cancel

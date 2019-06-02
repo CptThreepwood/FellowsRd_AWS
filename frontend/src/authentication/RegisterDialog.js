@@ -17,7 +17,9 @@ export default class RegisterDialog extends React.Component {
     super(props);
 
     this.state = {
-      message: 'Email account to register or reset',
+      message: 'Please provide new account details',
+      password: '',
+      showReset: false,
     };
   }
 
@@ -39,17 +41,31 @@ export default class RegisterDialog extends React.Component {
   };
 
   handleClose = () => {
-    const registerSuccess = (result) => {
-      this.props.finalise({reset: true});
+    const registerSuccess = (data) => {
+      console.log(data);
+      this.state.password = '';
+      this.props.finalise({confirm: true});
     }
 
     const registerFailure = (err) => {
       console.log(err);
-      this.setState({message: err.message});
+      this.state.password = '';
+      if (err.code === "UsernameExistsException") {
+        this.setState({
+          message: 'This email address is already registered',
+          showReset: true,
+        })
+        this.props.finalise({reset: true})
+      } else {
+        this.setState({message: err.message});
+      }
     }
 
     if (this.props.email) {
-      register(this.props.email, registerSuccess, registerFailure)
+      register(
+        this.props.email, this.state.password, 
+        registerSuccess, registerFailure
+      )
     }
   };
 
@@ -58,7 +74,6 @@ export default class RegisterDialog extends React.Component {
   }
 
   render() {
-    console.log(this.state)
     return (
       <div>
         <Dialog
@@ -68,7 +83,7 @@ export default class RegisterDialog extends React.Component {
           onBackdropClick={this.handleCancel}
           aria-labelledby="confirmation-dialog-title"
         >
-          <DialogTitle id="confirmation-dialog-title">Register</DialogTitle>
+          <DialogTitle id="confirmation-dialog-title">Sign Up</DialogTitle>
           <DialogContent>
             <Typography>{this.state.message}</Typography>
             <TextField
@@ -79,13 +94,21 @@ export default class RegisterDialog extends React.Component {
               margin="dense"
               fullWidth
             />
+            <TextField
+              type='password'
+              label="Password"
+              value={this.state.password}
+              onChange={this.handleChange('password')}
+              margin="dense"
+              fullWidth
+            />
           </DialogContent>
           <DialogActions>
             <Button color="primary" onClick={this.handleCancel}>
               Cancel
             </Button>
             <Button color="primary" keyboardFocused={true} onClick={this.handleClose}>
-              Submit
+              Sign Up
             </Button>
           </DialogActions>
         </Dialog>

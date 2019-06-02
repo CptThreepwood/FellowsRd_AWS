@@ -1,66 +1,77 @@
-import { CognitoUserPool, AuthenticationDetails, CognitoUser, CognitoUserAttribute } from 'amazon-cognito-identity-js';
-import { config } from './config'
-
-let userPool = new CognitoUserPool({
-  UserPoolId: config.cognito.userPoolId,
-  ClientId: config.cognito.userPoolClientId
-});
-
-let createCognitoUser = (email) => new CognitoUser({
-  Username: toUsername(email),
-  Pool: userPool
-});
+import {Auth} from 'aws-amplify';
 
 const toUsername = (email) => email.replace('@', '-at-')
 
-function signIn(email, password, onSuccess, onFailure) {
-  const authenticationDetails = new AuthenticationDetails({
-    Username: toUsername(email),
-    Password: password
-  });
-
-  let cognitoUser = createCognitoUser(email);
-  cognitoUser.authenticateUser(
-    authenticationDetails, {
-      onSuccess: onSuccess,
-      onFailure: onFailure
+function signIn(email, password) {
+  return Auth.signIn(email, password)
+  
+  /*.then(
+    user => {
+      if (user.challengeName === 'SMS_MFA' || 
+        user.challengeName === 'SOFTWARE_TOKEN_MFA') {
+        // You need to get the code from the UI inputs
+        // and then trigger the following function with a button click
+        console.log(user.challengeName);
+      } else if (user.challengeName === 'NEW_PASSWORD_REQUIRED') {
+        onFailure('ResetPassword');
+      } else if (user.challengeName === 'MFA_SETUP') {
+        // This happens when the MFA method is TOTP
+        // The user needs to setup the TOTP before using it
+        // More info please check the Enabling MFA part
+        console.log(user.challengeName);
+        Auth.setupTOTP(user);
+      } else {
+        // The user directly signs in
+        onSuccess(user);
+      } 
     }
-  );
+  ).catch(
+    err => {
+      if (err.code === 'UserNotConfirmedException') {
+        onFailure('Reconfim');
+      } else if (err.code === 'PasswordResetRequiredException') {
+        onFailure('ResetPassword');
+      } else if (err.code === 'NotAuthorizedException') {
+        onFailure('IncorrectPassword');
+      } else if (err.code === 'UserNotFoundException') {
+        onFailure('UserNotFound');
+      } else {
+        onFailure(err);
+      }
+    }
+  )*/
 }
 
-function register(email, onSuccess, onFailure) {
-  const displayName = email.split('@')[0];
-  const attributeList = [
-    new CognitoUserAttribute({Name: 'email', Value: email}),
-    new CognitoUserAttribute({Name: 'preferred_username', Value: displayName})
-  ];
-
-  // Create a temporary password from a random ASCII string
-  const temp_password = String.fromCharCode(...Array.from('test_password').map(
-    () => Math.floor(Math.random() * 93 + 33))
-  )
-  userPool.signUp(
-    email, temp_password, attributeList, null,
-    (err, result) => err ? onFailure(err) : onSuccess(result)
-  );
+function register(email, password, onSuccess, onFailure) {
+  return Auth.signUp({
+    username: email,
+    password,
+    attributes: {
+        email,
+        preferred_username: email.split('@')[0],
+    },
+  }).then(onSuccess).catch(onFailure);
 }
 
-function forgotPassword(email, onSuccess, onFailure) {
-  let cognitoUser = createCognitoUser(email);
-  cognitoUser.forgotPassword({
-    onSuccess: onSuccess,
-    onFailure: onFailure,
-  });
+function forgotPassword(email) {
+  return Auth.forgotPassword(email)
 }
 
-function verifyNewPassword(email, password, verificationCode, onSuccess, onFailure) {
-  let cognitoUser = createCognitoUser(email);
-  cognitoUser.confirmPassword(
-    verificationCode, password,
-    onSuccess, onFailure,
-  );
+function submitNewPassword(email, password, verificationCode, onSuccess, onFailure) {
+  Auth.forgotPasswordSubmit(email, verificationCode, password)
+    .then(onSuccess)
+    .catch(onFailure);
+}
+
+function confimSignUp(email, verificationCode, onSuccess, onFailure) {
+  Auth.confirmSignUp(email, verificationCode, {
+    // Optional. Force user confirmation irrespective of existing alias. By default set to True.
+    forceAliasCreation: true    
+  }).then(
+    data => console.log(data)
+  ).catch(onFailure);
 }
 
 export {
-  signIn, register, forgotPassword, verifyNewPassword
+  signIn, register, forgotPassword, submitNewPassword, confimSignUp
 }

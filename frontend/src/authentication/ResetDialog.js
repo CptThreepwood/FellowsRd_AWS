@@ -2,7 +2,7 @@ import React from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import {verifyNewPassword} from './CognitoHelperFunctions'
+import {submitNewPassword, signIn} from './CognitoHelperFunctions'
 import { DialogTitle, DialogActions, DialogContent, Typography } from '@material-ui/core';
 import Slide from '@material-ui/core/Slide';
 
@@ -17,12 +17,10 @@ export default class ResetDialog extends React.Component {
     this.state = {
       code: '',
       password: '',
-      confirmPassword: '',
       message: 'Enter your new password and the confirmation code sent to this email address'
     };
     this.code = React.createRef();
     this.password = React.createRef();
-    this.confirmPassword = React.createRef();
   }
 
   shouldComponentUpdate(nextProps) {
@@ -43,9 +41,20 @@ export default class ResetDialog extends React.Component {
   };
 
   handleClose = () => {
-    const resetSuccess = (result) => {
-      this.props.updateAuth(result);
-      this.props.finalise({});
+    const resetSuccess = () => {
+      const signinSuccess = (result) => {
+        this.context.updateAuth(result);
+        this.props.finalise({});
+      }
+      const signinFailure = (err) => {
+        console.log(err);
+        this.setState({message: err.message});
+      }
+      
+      signIn(
+        this.props.email, this.state.password,
+        signinSuccess, signinFailure
+      );
     }
 
     const resetFailure = (err) => {
@@ -53,12 +62,9 @@ export default class ResetDialog extends React.Component {
       this.setState({message: err.message});
     }
 
-    if (this.state.password !== this.state.confirmPassword) {
-      resetFailure({message: 'Passwords do not match'});
-    }
-    else if (this.props.email && this.state.password) {
-      verifyNewPassword(
-        this.props.email, this.state.password,
+    if (this.props.email && this.state.password) {
+      submitNewPassword(
+        this.props.email, this.state.password, this.code,
         resetSuccess, resetFailure
       )
     }
@@ -68,7 +74,6 @@ export default class ResetDialog extends React.Component {
     this.setState({
       code: '',
       password: '',
-      confirmPassword: '',
     });
     this.props.finalise({});
   }
@@ -106,14 +111,6 @@ export default class ResetDialog extends React.Component {
               label="Password"
               value={this.state.password}
               onChange={this.handleChange('password')}
-              margin="dense"
-              fullWidth
-            />
-            <TextField
-              type='password'
-              label="Confirm Password"
-              value={this.state.confirmPassword}
-              onChange={this.handleChange('confirmPassword')}
               margin="dense"
               fullWidth
             />

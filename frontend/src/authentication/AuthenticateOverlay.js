@@ -6,6 +6,7 @@ import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
 import SignInDialog from './SignInDialog';
 import RegisterDialog from './RegisterDialog';
 import ResetDialog from './ResetDialog';
+import ConfirmDialog from './ConfirmDialog';
 
 const floating_style = {
   width: '110px',
@@ -27,20 +28,28 @@ export default class AuthenticateOverlay extends React.Component {
     }
   }
 
+  shouldComponentUpdate(nextProps) {
+    // if (
+    //   this.props.signInOpen == nextProps.signInOpen && 
+    //   this.props.registerOpen == nextProps.registerOpen && 
+    //   this.props.resetOpen == nextProps.resetOpen
+    // ) {
+    //   return false;
+    // }
+    return true;
+  }
+
   handleEmailChange = (email) => {
     this.setState({email});
   }
 
-  openSignIn = () => {
-    this.handleDialog({signIn: true})
-  }
-
   handleDialog = (data = {}) => {
-    const {signIn, register, reset} = data;
+    const {signIn, register, reset, confirm} = data;
     this.setState({
       signInOpen: signIn || false,
       registerOpen: register || false,
       resetOpen: reset || false,
+      confirmOpen: confirm || false,
     });
   }
 
@@ -53,14 +62,14 @@ export default class AuthenticateOverlay extends React.Component {
             color="primary"
             icon={<AccountCircle/>}
             style={floating_style}
-            onClick={this.openSignIn}
+            onClick={() => this.handleDialog({signIn: true})}
           >Sign In</Button>
           <SignInDialog
             open={this.state.signInOpen}
             email={this.state.email}
             updateEmail={this.handleEmailChange}
-            updateAuth={this.props.updateAuth}
             finalise={this.handleDialog}
+            updateAuth={this.props.updateAuth}
           />
           <RegisterDialog
             open={this.state.registerOpen}
@@ -71,8 +80,11 @@ export default class AuthenticateOverlay extends React.Component {
           <ResetDialog
             open={this.state.resetOpen}
             email={this.state.email}
-            updateEmail={this.handleEmailChange}
-            updateAuth={this.props.updateAuth}
+            finalise={this.handleDialog}
+          />
+          <ConfirmDialog
+            open={this.state.confirmOpen}
+            email={this.state.email}
             finalise={this.handleDialog}
           />
         </MuiThemeProvider>
