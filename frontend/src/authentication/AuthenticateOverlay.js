@@ -30,8 +30,8 @@ export default class AuthenticateOverlay extends React.Component {
 
   shouldComponentUpdate(nextProps) {
     // if (
-    //   this.props.signInOpen == nextProps.signInOpen && 
-    //   this.props.registerOpen == nextProps.registerOpen && 
+    //   this.props.signInOpen == nextProps.signInOpen &&
+    //   this.props.registerOpen == nextProps.registerOpen &&
     //   this.props.resetOpen == nextProps.resetOpen
     // ) {
     //   return false;

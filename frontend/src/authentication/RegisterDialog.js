@@ -63,7 +63,7 @@ export default class RegisterDialog extends React.Component {
 
     if (this.props.email) {
       register(
-        this.props.email, this.state.password, 
+        this.props.email, this.state.password,
         registerSuccess, registerFailure
       )
     }

@@ -19,7 +19,7 @@ class BookingCalendar extends Component {
     // Get URL from config TODO
     var start = new Date(year, 0, 1);
     var end = new Date(year + 1, 0, 1);
-    return fetch(config.api.invokeUrl + '/booking/get', {
+    return fetch(config.api.invokeUrl, {
       method: 'POST',
       credentials: 'omit',
       headers: {

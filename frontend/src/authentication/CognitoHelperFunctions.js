@@ -4,10 +4,10 @@ const toUsername = (email) => email.replace('@', '-at-')
 
 function signIn(email, password) {
   return Auth.signIn(email, password)
-  
+
   /*.then(
     user => {
-      if (user.challengeName === 'SMS_MFA' || 
+      if (user.challengeName === 'SMS_MFA' ||
         user.challengeName === 'SOFTWARE_TOKEN_MFA') {
         // You need to get the code from the UI inputs
         // and then trigger the following function with a button click
@@ -23,7 +23,7 @@ function signIn(email, password) {
       } else {
         // The user directly signs in
         onSuccess(user);
-      } 
+      }
     }
   ).catch(
     err => {
@@ -66,7 +66,7 @@ function submitNewPassword(email, password, verificationCode, onSuccess, onFailu
 function confimSignUp(email, verificationCode, onSuccess, onFailure) {
   Auth.confirmSignUp(email, verificationCode, {
     // Optional. Force user confirmation irrespective of existing alias. By default set to True.
-    forceAliasCreation: true    
+    forceAliasCreation: true
   }).then(
     data => console.log(data)
   ).catch(onFailure);

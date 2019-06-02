@@ -50,7 +50,7 @@ export default class ResetDialog extends React.Component {
         console.log(err);
         this.setState({message: err.message});
       }
-      
+
       signIn(
         this.props.email, this.state.password,
         signinSuccess, signinFailure
