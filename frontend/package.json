@@ -10,12 +10,13 @@
     "aws-amplify-react": "^2.3.6",
     "aws-sdk": "^2.243.1",
     "prop-types": "^15.6.2",
+    "query-string": "^6.5.0",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
     "react-infinite-calendar": "^2.3.1",
     "react-loading": "^2.0.3",
     "react-responsive-image": "^3.4.3",
-    "react-scripts": "1.1.4",
+    "react-scripts": "2.0.3",
     "react-slick": "^0.23.1",
     "react-yearly-calendar": "^1.2.1"
   },
@@ -26,5 +27,11 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "publish": "aws s3 sync frontend/ s3://fellowsrd.com/ --profile serverless_personal"
-  }
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }
