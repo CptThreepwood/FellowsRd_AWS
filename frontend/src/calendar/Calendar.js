@@ -12,23 +12,25 @@ import {
   Paper, Grid, TextField, Typography
 } from '@material-ui/core';
 import {config} from './config';
+import queryString from "query-string";
 
 
 class BookingCalendar extends Component {
   getBookings(year) {
     // Get URL from config TODO
-    var start = new Date(year, 0, 1);
-    var end = new Date(year + 1, 0, 1);
-    return fetch(config.api.invokeUrl, {
-      method: 'POST',
+    const start = new Date(year, 0, 1);
+    const end = new Date(year + 1, 0, 1);
+    const query_url = config.api.invokeUrl + '?' + queryString.stringify({
+      startDate: start.toDateString(),
+      endDate: end.toDateString()
+    })
+    console.log(query_url)
+    return fetch(query_url, {
+      method: 'GET',
       credentials: 'omit',
       headers: {
         Authorization: this.props.authDetails.idToken.jwtToken,
       },
-      body: JSON.stringify({
-        startDate: start.toDateString(),
-        endDate: end.toDateString(),
-      }),
       contentType: 'application/json',
       mode: 'cors',
     }).then(

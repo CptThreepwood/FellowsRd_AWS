@@ -23,6 +23,11 @@ resource "aws_api_gateway_method" "get_getBookings" {
   http_method   = "GET"
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = "${aws_api_gateway_authorizer.cognito_auth.id}"
+
+  request_parameters = {
+    "method.request.querystring.startDate" = false
+    "method.request.querystring.endDate" = false
+  }
 }
 
 resource "aws_api_gateway_integration" "getBookings" {
