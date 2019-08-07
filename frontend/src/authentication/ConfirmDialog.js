@@ -2,7 +2,7 @@ import React from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import {confimSignUp, signIn} from './CognitoHelperFunctions'
+import { confimSignUp, signIn } from './CognitoHelperFunctions'
 import { DialogTitle, DialogActions, DialogContent, Typography } from '@material-ui/core';
 import Slide from '@material-ui/core/Slide';
 

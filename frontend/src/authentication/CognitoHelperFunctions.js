@@ -2,7 +2,7 @@ import {Auth} from 'aws-amplify';
 
 const toUsername = (email) => email.replace('@', '-at-')
 
-function signIn(email, password) {
+export const signIn = function(email, password) {
   return Auth.signIn(email, password)
 
   /*.then(
@@ -42,7 +42,7 @@ function signIn(email, password) {
   )*/
 }
 
-function register(email, password, onSuccess, onFailure) {
+export const register = function(email, password) {
   return Auth.signUp({
     username: email,
     password,
@@ -50,28 +50,26 @@ function register(email, password, onSuccess, onFailure) {
         email,
         preferred_username: email.split('@')[0],
     },
-  }).then(onSuccess).catch(onFailure);
+  });
 }
 
-function forgotPassword(email) {
+export const forgotPassword = function(email) {
   return Auth.forgotPassword(email)
 }
 
-function submitNewPassword(email, password, verificationCode, onSuccess, onFailure) {
+export const submitNewPassword = function(email, password, verificationCode, onSuccess, onFailure) {
   Auth.forgotPasswordSubmit(email, verificationCode, password)
     .then(onSuccess)
     .catch(onFailure);
 }
 
-function confimSignUp(email, verificationCode, onSuccess, onFailure) {
-  Auth.confirmSignUp(email, verificationCode, {
+export const launchVerifyEmail = function () {
+  return Auth.verifyCurrentUserAttribute('email');
+  
+}
+export const confimSignUp = function(email, verificationCode) {
+  return Auth.confirmSignUp(email, verificationCode, {
     // Optional. Force user confirmation irrespective of existing alias. By default set to True.
     forceAliasCreation: true
-  }).then(
-    data => console.log(data)
-  ).catch(onFailure);
-}
-
-export {
-  signIn, register, forgotPassword, submitNewPassword, confimSignUp
+  });
 }

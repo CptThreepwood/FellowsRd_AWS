@@ -113,7 +113,7 @@ export default class SignInDialog extends React.Component {
               margin="dense"
               fullWidth
             />
-            <Button color="danger" keyboardFocused={true} onClick={this.launchReset}>
+            <Button color="secondary" keyboardFocused={true} onClick={this.launchReset}>
               Reset Password
             </Button>
           </DialogContent>

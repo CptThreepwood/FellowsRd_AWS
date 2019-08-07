@@ -6,7 +6,7 @@ import Dialog from '@material-ui/core/Dialog';
 import TextField from '@material-ui/core/TextField';
 import { DialogTitle, DialogActions, DialogContent, Typography } from '@material-ui/core';
 
-import { register, forgotPassword} from './CognitoHelperFunctions';
+import { register, forgotPassword, launchVerifyEmail} from './CognitoHelperFunctions';
 
 function Transition(props) {
   return <Slide direction="down" {...props} />;
@@ -40,31 +40,32 @@ export default class RegisterDialog extends React.Component {
     }
   };
 
-  handleClose = () => {
-    const registerSuccess = (data) => {
-      console.log(data);
-      this.state.password = '';
-      this.props.finalise({confirm: true});
-    }
-
-    const registerFailure = (err) => {
-      console.log(err);
-      this.state.password = '';
-      if (err.code === "UsernameExistsException") {
-        this.setState({
-          message: 'This email address is already registered',
-          showReset: true,
-        })
-        this.props.finalise({reset: true})
-      } else {
-        this.setState({message: err.message});
-      }
-    }
-
+  handleClose = function() {
     if (this.props.email) {
-      register(
-        this.props.email, this.state.password,
-        registerSuccess, registerFailure
+      register(this.props.email, this.state.password).then(
+        (data) => {
+          console.log(data);
+          return launchVerifyEmail()
+        }
+      ).then(
+        () => {
+          this.state.password = '';
+          this.props.finalise({confirm: true})
+        }
+      ).catch(
+        (err) => {
+          console.log(err);
+          this.state.password = '';
+          if (err.code === "UsernameExistsException") {
+            this.setState({
+              message: 'This email address is already registered',
+              showReset: true,
+            })
+            this.props.finalise({reset: true})
+          } else {
+            this.setState({message: err.message});
+          }
+        }
       )
     }
   };

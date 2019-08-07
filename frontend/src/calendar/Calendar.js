@@ -31,7 +31,6 @@ class BookingCalendar extends Component {
       headers: {
         Authorization: this.props.authDetails.idToken.jwtToken,
       },
-      contentType: 'application/json',
       mode: 'cors',
     }).then(
       response => response.json()

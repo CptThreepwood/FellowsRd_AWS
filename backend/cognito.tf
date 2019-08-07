@@ -11,6 +11,7 @@ resource "aws_cognito_user_pool" "users" {
   }
 
   email_verification_subject = "Welcome to Fellows Rd"
+  auto_verified_attributes = ["email"]
 }
 
 resource aws_cognito_user_pool_client "frontendClient" {
