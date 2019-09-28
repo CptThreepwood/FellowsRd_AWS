@@ -60,7 +60,7 @@ resource "aws_api_gateway_method_response" "CORS" {
   }
 }
 
-resource "aws_api_gateway_method" "get_getBookings" {
+resource "aws_api_gateway_method" "getBookings" {
   rest_api_id   = "${aws_api_gateway_rest_api.booking_gateway.id}"
   resource_id   = "${aws_api_gateway_resource.proxy_resource.id}"
   http_method   = "GET"
@@ -68,10 +68,11 @@ resource "aws_api_gateway_method" "get_getBookings" {
   authorizer_id = "${aws_api_gateway_authorizer.cognito_auth.id}"
 
   request_parameters = {
-    "method.request.querystring.startDate" = false
-    "method.request.querystring.endDate" = false
+    "method.request.querystring.month" = false
   }
 }
+
+data "aws_region" "current" {}
 
 resource "aws_api_gateway_integration" "getBookings" {
   rest_api_id = "${aws_api_gateway_rest_api.booking_gateway.id}"
@@ -79,8 +80,48 @@ resource "aws_api_gateway_integration" "getBookings" {
   http_method = "${aws_api_gateway_method.get_getBookings.http_method}"
 
   integration_http_method = "GET"
-  type                    = "AWS_PROXY"
-  uri                     = "${aws_lambda_function.getBookings.invoke_arn}"
+  type                    = "AWS"
+  uri                     = "arn:aws:apigateway:${data.aws_region.current}:dynamodb:action/Query"
+  credentials             = "${aws_iam_role.api_dynamo.arn}"
+
+  request_templates = {
+    "application/json" = <<-EOT
+      {
+        "TableName": ${aws_dynamodb_table.booking_table.name},
+        "KeyConditionExpression": "month = :v1",
+        "ExpressionAttributeValues": { ":v1": { "S": "$input.params('month')" } }
+      }
+    EOT
+  }
+}
+
+resource "aws_api_gateway_integration_response" "getBookings" {
+  rest_api_id = "${aws_api_gateway_rest_api.booking_gateway.id}"
+  resource_id = "${aws_api_gateway_method.get_getBookings.resource_id}"
+  http_method = "${aws_api_gateway_method.get_getBookings.http_method}"
+
+  response_templates = {
+    "application/json" = <<-EOT
+    #set($inputRoot = $input.path('$'))
+      {
+        "bookings": [
+            #foreach($elem in $inputRoot.Items) {
+              "commentId": "$elem.commentId.S",
+              "userName": "$elem.userName.S",
+              "message": "$elem.message.S"
+            }#if($foreach.hasNext),#end
+          #end
+        ]
+      }
+    EOT
+  }
+}
+
+resource "aws_api_gateway_method_response" "getBookings_200" {
+  rest_api_id = "${aws_api_gateway_rest_api.booking_gateway.id}"
+  resource_id = "${aws_api_gateway_method.get_getBookings.resource_id}"
+  http_method = "${aws_api_gateway_method.get_getBookings.http_method}"
+  status_code = "200"
 }
 
 resource "aws_api_gateway_method" "post_createBooking" {
