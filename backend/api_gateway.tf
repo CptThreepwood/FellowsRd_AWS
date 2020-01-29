@@ -26,7 +26,7 @@ resource "aws_api_gateway_method" "CORS" {
 
 resource "aws_api_gateway_integration" "CORS" {
   rest_api_id = "${aws_api_gateway_rest_api.booking_gateway.id}"
-  resource_id = "${aws_api_gateway_method.CORS.resource_id}"
+  resource_id = "${aws_api_gateway_resource.proxy_resource.id}"
   http_method = "${aws_api_gateway_method.CORS.http_method}"
 
   integration_http_method = "OPTIONS"
@@ -35,7 +35,7 @@ resource "aws_api_gateway_integration" "CORS" {
 
 resource "aws_api_gateway_integration_response" "CORS" {
   rest_api_id = "${aws_api_gateway_rest_api.booking_gateway.id}"
-  resource_id = "${aws_api_gateway_method.CORS.resource_id}"
+  resource_id = "${aws_api_gateway_resource.proxy_resource.id}"
   http_method = "${aws_api_gateway_method.CORS.http_method}"
 
   status_code = "200"
@@ -49,7 +49,7 @@ resource "aws_api_gateway_integration_response" "CORS" {
 
 resource "aws_api_gateway_method_response" "CORS" {
   rest_api_id = "${aws_api_gateway_rest_api.booking_gateway.id}"
-  resource_id = "${aws_api_gateway_method.CORS.resource_id}"
+  resource_id = "${aws_api_gateway_resource.proxy_resource.id}"
   http_method = "${aws_api_gateway_method.CORS.http_method}"
   status_code = "${aws_api_gateway_integration_response.CORS.status_code}"
 
@@ -60,7 +60,7 @@ resource "aws_api_gateway_method_response" "CORS" {
   }
 }
 
-resource "aws_api_gateway_method" "getBookings" {
+resource "aws_api_gateway_method" "get_bookings" {
   rest_api_id   = "${aws_api_gateway_rest_api.booking_gateway.id}"
   resource_id   = "${aws_api_gateway_resource.proxy_resource.id}"
   http_method   = "GET"
@@ -74,14 +74,14 @@ resource "aws_api_gateway_method" "getBookings" {
 
 data "aws_region" "current" {}
 
-resource "aws_api_gateway_integration" "getBookings" {
+resource "aws_api_gateway_integration" "get_bookings" {
   rest_api_id = "${aws_api_gateway_rest_api.booking_gateway.id}"
-  resource_id = "${aws_api_gateway_method.get_getBookings.resource_id}"
-  http_method = "${aws_api_gateway_method.get_getBookings.http_method}"
+  resource_id = "${aws_api_gateway_resource.proxy_resource.id}"
+  http_method = "${aws_api_gateway_method.get_bookings.http_method}"
 
   integration_http_method = "GET"
   type                    = "AWS"
-  uri                     = "arn:aws:apigateway:${data.aws_region.current}:dynamodb:action/Query"
+  uri                     = "arn:aws:apigateway:${data.aws_region.current.name}:dynamodb:action/Query"
   credentials             = "${aws_iam_role.api_dynamo.arn}"
 
   request_templates = {
@@ -95,10 +95,11 @@ resource "aws_api_gateway_integration" "getBookings" {
   }
 }
 
-resource "aws_api_gateway_integration_response" "getBookings" {
+resource "aws_api_gateway_integration_response" "get_bookings" {
   rest_api_id = "${aws_api_gateway_rest_api.booking_gateway.id}"
-  resource_id = "${aws_api_gateway_method.get_getBookings.resource_id}"
-  http_method = "${aws_api_gateway_method.get_getBookings.http_method}"
+  resource_id = "${aws_api_gateway_resource.proxy_resource.id}"
+  http_method = "${aws_api_gateway_method.get_bookings.http_method}"
+  status_code = 200
 
   response_templates = {
     "application/json" = <<-EOT
@@ -117,14 +118,14 @@ resource "aws_api_gateway_integration_response" "getBookings" {
   }
 }
 
-resource "aws_api_gateway_method_response" "getBookings_200" {
+resource "aws_api_gateway_method_response" "get_bookings_200" {
   rest_api_id = "${aws_api_gateway_rest_api.booking_gateway.id}"
-  resource_id = "${aws_api_gateway_method.get_getBookings.resource_id}"
-  http_method = "${aws_api_gateway_method.get_getBookings.http_method}"
+  resource_id = "${aws_api_gateway_resource.proxy_resource.id}"
+  http_method = "${aws_api_gateway_method.get_bookings.http_method}"
   status_code = "200"
 }
 
-resource "aws_api_gateway_method" "post_createBooking" {
+resource "aws_api_gateway_method" "create_booking" {
   rest_api_id   = "${aws_api_gateway_rest_api.booking_gateway.id}"
   resource_id   = "${aws_api_gateway_resource.proxy_resource.id}"
   http_method   = "POST"
@@ -132,20 +133,31 @@ resource "aws_api_gateway_method" "post_createBooking" {
   authorizer_id = "${aws_api_gateway_authorizer.cognito_auth.id}"
 }
 
-resource "aws_api_gateway_integration" "createBooking" {
+resource "aws_api_gateway_integration" "create_booking" {
   rest_api_id = "${aws_api_gateway_rest_api.booking_gateway.id}"
-  resource_id = "${aws_api_gateway_method.post_createBooking.resource_id}"
-  http_method = "${aws_api_gateway_method.post_createBooking.http_method}"
+  resource_id = "${aws_api_gateway_resource.proxy_resource.id}"
+  http_method = "${aws_api_gateway_method.create_booking.http_method}"
 
+  type                    = "AWS"
   integration_http_method = "POST"
-  type                    = "AWS_PROXY"
-  uri                     = "${aws_lambda_function.createBooking.invoke_arn}"
+  uri                     = "arn:aws:apigateway:${data.aws_region.current.name}:dynamodb:action/PutItem"
+  credentials             = "${aws_iam_role.api_dynamo.arn}"
+
+  request_templates = {
+    "application/json" = <<-EOT
+      {
+        "TableName": ${aws_dynamodb_table.booking_table.name},
+        "KeyConditionExpression": "month = :v1",
+        "ExpressionAttributeValues": { ":v1": { "S": "$input.params('month')" } }
+      }
+    EOT
+  }
 }
 
 resource "aws_api_gateway_deployment" "production" {
   depends_on = [
-    "aws_api_gateway_integration.createBooking",
-    "aws_api_gateway_integration.getBookings",
+    "aws_api_gateway_integration.create_booking",
+    "aws_api_gateway_integration.get_bookings",
   ]
 
   rest_api_id = "${aws_api_gateway_rest_api.booking_gateway.id}"
