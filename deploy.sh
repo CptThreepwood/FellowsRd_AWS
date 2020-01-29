@@ -1,4 +1,12 @@
+<<<<<<< HEAD
 #!/bin/bash
+=======
+cd ./frontend
+yarn build
+cd build
+
+cd ../..
+>>>>>>> 1759f2e656ea279ff6e638e6084e53a69cb34730
 terraform init
 terraform apply
 
