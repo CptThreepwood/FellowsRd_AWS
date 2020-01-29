@@ -38,12 +38,12 @@ resource "aws_iam_policy" "dynamo_write" {
   name = "dynamo_write"
   path = "/${var.app_name}/"
   description = "IAM policy for writing to the booking table"
-  policy = "${data.aws_iam_policy_document.dynamo_write}"
+  policy = "${data.aws_iam_policy_document.dynamo_write.json}"
 }
 
 resource "aws_iam_role_policy_attachment" "dynamo_write" {
-  role       = "${aws_iam_role.api_dynamo}"
-  policy_arn = "${aws_iam_policy.dynamo_write}"
+  role       = "${aws_iam_role.api_dynamo.name}"
+  policy_arn = "${aws_iam_policy.dynamo_write.arn}"
 }
 
 ## Read from dynamo table
@@ -68,6 +68,6 @@ resource "aws_iam_policy" "dynamo_read" {
 }
 
 resource "aws_iam_role_policy_attachment" "dynamo_read" {
-  role       = "${aws_iam_role.api_dynamo}"
-  policy_arn = "${aws_iam_policy.dynamo_read}"
+  role       = "${aws_iam_role.api_dynamo.name}"
+  policy_arn = "${aws_iam_policy.dynamo_read.arn}"
 }
