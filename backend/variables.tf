@@ -1,5 +1,5 @@
 variable "app_name" {
-  default="testBookingApp"
+    default="testBookingApp"
 }
 
 variable "app_version" {

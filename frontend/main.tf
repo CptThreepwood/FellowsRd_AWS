@@ -5,7 +5,7 @@ resource "aws_s3_bucket" "log_bucket" {
 }
 
 resource "aws_s3_bucket" "website" {
-  bucket = "${var.site_url}"
+  bucket = var.site_url
   acl    = "public-read"
   policy = <<EOF
 {
@@ -21,7 +21,7 @@ resource "aws_s3_bucket" "website" {
   EOF
 
   logging {
-    target_bucket = "${aws_s3_bucket.log_bucket.id}"
+    target_bucket = aws_s3_bucket.log_bucket.id
     target_prefix = "log/"
   }
 

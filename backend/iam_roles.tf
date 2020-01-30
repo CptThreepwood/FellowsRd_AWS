@@ -29,7 +29,7 @@ data "aws_iam_policy_document" dynamo_write {
           "dynamodb:DeleteItem"
         ]
         resources = [
-            "${aws_dynamodb_table.booking_table.arn}"
+            aws_dynamodb_table.booking_table.arn
         ]
     }
 }
@@ -38,12 +38,12 @@ resource "aws_iam_policy" "dynamo_write" {
   name = "dynamo_write"
   path = "/${var.app_name}/"
   description = "IAM policy for writing to the booking table"
-  policy = "${data.aws_iam_policy_document.dynamo_write.json}"
+  policy = data.aws_iam_policy_document.dynamo_write.json
 }
 
 resource "aws_iam_role_policy_attachment" "dynamo_write" {
-  role       = "${aws_iam_role.api_dynamo.name}"
-  policy_arn = "${aws_iam_policy.dynamo_write.arn}"
+  role       = aws_iam_role.api_dynamo.name
+  policy_arn = aws_iam_policy.dynamo_write.arn
 }
 
 ## Read from dynamo table
@@ -55,7 +55,7 @@ data "aws_iam_policy_document" dynamo_read {
             "dynamodb:Query"
         ]
         resources = [
-            "${aws_dynamodb_table.booking_table.arn}"
+            aws_dynamodb_table.booking_table.arn
         ]
     }
 }
@@ -64,10 +64,10 @@ resource "aws_iam_policy" "dynamo_read" {
   name = "dynamo_read"
   path = "/${var.app_name}/"
   description = "IAM policy for reading from the booking table"
-  policy = "${data.aws_iam_policy_document.dynamo_read.json}"
+  policy = data.aws_iam_policy_document.dynamo_read.json
 }
 
 resource "aws_iam_role_policy_attachment" "dynamo_read" {
-  role       = "${aws_iam_role.api_dynamo.name}"
-  policy_arn = "${aws_iam_policy.dynamo_read.arn}"
+  role       = aws_iam_role.api_dynamo.name
+  policy_arn = aws_iam_policy.dynamo_read.arn
 }

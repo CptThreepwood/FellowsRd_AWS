@@ -1,11 +1,11 @@
 variable "site_url" {
-    type = "string"
+    type = string
 }
 
 variable "app_name" {
-    type = "string"
+    type = string
 }
 
 variable "backend_version" {
-    type = "string"
+    type = string
 }

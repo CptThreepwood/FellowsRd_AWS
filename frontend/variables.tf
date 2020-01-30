@@ -1,15 +1,15 @@
 variable "site_url" {
-    type = "string"
+    type = string
 }
 
 variable api_invoke_url {
-    type = "string"
+    type = string
 }
 
 variable "userPoolId" {
-    type = "string"
+    type = string
 }
 
 variable "userPoolWebClientId" {
-    type = "string"
+    type = string
 }

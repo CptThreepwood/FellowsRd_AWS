@@ -17,5 +17,5 @@ resource "aws_cognito_user_pool" "users" {
 resource aws_cognito_user_pool_client "frontendClient" {
   name = "frontendClient"
 
-  user_pool_id = "${aws_cognito_user_pool.users.id}"
+  user_pool_id = aws_cognito_user_pool.users.id
 }
