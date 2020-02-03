@@ -34,6 +34,8 @@ resource "aws_api_gateway_integration" "CORS" {
 }
 
 resource "aws_api_gateway_integration_response" "CORS" {
+  depends_on = [aws_api_gateway_integration.CORS]
+
   rest_api_id = aws_api_gateway_rest_api.booking_gateway.id
   resource_id = aws_api_gateway_resource.proxy_resource.id
   http_method = aws_api_gateway_method.CORS.http_method
@@ -96,6 +98,8 @@ resource "aws_api_gateway_integration" "get_bookings" {
 }
 
 resource "aws_api_gateway_integration_response" "get_bookings" {
+  depends_on = [aws_api_gateway_integration.get_bookings]
+
   rest_api_id = aws_api_gateway_rest_api.booking_gateway.id
   resource_id = aws_api_gateway_resource.proxy_resource.id
   http_method = aws_api_gateway_method.get_bookings.http_method
