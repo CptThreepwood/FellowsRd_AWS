@@ -1,3 +1,6 @@
+# IDE Settings
+.vscode
+
 # Libraries (front and backend)
 node_modules
 
