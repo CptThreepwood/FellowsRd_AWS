@@ -29,7 +29,6 @@ resource "aws_api_gateway_integration" "CORS" {
   resource_id = aws_api_gateway_resource.proxy_resource.id
   http_method = aws_api_gateway_method.CORS.http_method
 
-  integration_http_method = "OPTIONS"
   type                    = "MOCK"
 }
 
@@ -39,13 +38,13 @@ resource "aws_api_gateway_integration_response" "CORS" {
   rest_api_id = aws_api_gateway_rest_api.booking_gateway.id
   resource_id = aws_api_gateway_resource.proxy_resource.id
   http_method = aws_api_gateway_method.CORS.http_method
+  status_code = aws_api_gateway_method_response.CORS.status_code
 
-  status_code = "200"
 
   response_parameters = {
-    "method.response.header.Access-Control-Allow-Methods" = "true"
-    "method.response.header.Access-Control-Allow-Headers" = "true"
-    "method.response.header.Access-Control-Allow-Origin" = "*"
+      "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+      "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST,PUT'",
+      "method.response.header.Access-Control-Allow-Origin" = "'*'"
   }
 }
 
@@ -53,7 +52,11 @@ resource "aws_api_gateway_method_response" "CORS" {
   rest_api_id = aws_api_gateway_rest_api.booking_gateway.id
   resource_id = aws_api_gateway_resource.proxy_resource.id
   http_method = aws_api_gateway_method.CORS.http_method
-  status_code = aws_api_gateway_integration_response.CORS.status_code
+  status_code = "200"
+
+  response_models = {
+    "application/json" = "Empty"
+  }
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Methods" = true
@@ -122,7 +125,7 @@ resource "aws_api_gateway_integration_response" "get_bookings" {
   }
 }
 
-resource "aws_api_gateway_method_response" "get_bookings_200" {
+resource "aws_api_gateway_method_response" "get_bookings" {
   rest_api_id = aws_api_gateway_rest_api.booking_gateway.id
   resource_id = aws_api_gateway_resource.proxy_resource.id
   http_method = aws_api_gateway_method.get_bookings.http_method
