@@ -40,7 +40,7 @@ export default class RegisterDialog extends React.Component {
     }
   };
 
-  handleClose = function() {
+  handleClose = () => {
     if (this.props.email) {
       register(this.props.email, this.state.password).then(
         (data) => {
