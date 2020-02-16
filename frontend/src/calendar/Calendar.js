@@ -132,7 +132,7 @@ class BookingCalendar extends Component {
 
   makeBooking(bookingData) {
     // Get URL from config TODO
-    return fetch( config.api.invokeUrl + '/booking/create', {
+    return fetch( config.api.invokeUrl, {
       method: 'POST',
       credentials: 'omit',
       headers: {

@@ -30,6 +30,16 @@ resource "aws_api_gateway_integration" "CORS" {
   http_method = aws_api_gateway_method.CORS.http_method
 
   type                    = "MOCK"
+
+  # Transforms the incoming XML request to JSON
+  passthrough_behavior = "NEVER"
+  request_templates = {
+    "application/json" = <<EOF
+{
+   "statusCode" : 200
+}
+EOF
+  }
 }
 
 resource "aws_api_gateway_integration_response" "CORS" {
@@ -52,7 +62,7 @@ resource "aws_api_gateway_method_response" "CORS" {
   rest_api_id = aws_api_gateway_rest_api.booking_gateway.id
   resource_id = aws_api_gateway_resource.proxy_resource.id
   http_method = aws_api_gateway_method.CORS.http_method
-  status_code = "200"
+  status_code = 200
 
   response_models = {
     "application/json" = "Empty"
@@ -106,7 +116,7 @@ resource "aws_api_gateway_integration_response" "get_bookings" {
   rest_api_id = aws_api_gateway_rest_api.booking_gateway.id
   resource_id = aws_api_gateway_resource.proxy_resource.id
   http_method = aws_api_gateway_method.get_bookings.http_method
-  status_code = 200
+  status_code = aws_api_gateway_method_response.get_bookings.status_code
 
   response_templates = {
     "application/json" = <<-EOT
@@ -129,7 +139,11 @@ resource "aws_api_gateway_method_response" "get_bookings" {
   rest_api_id = aws_api_gateway_rest_api.booking_gateway.id
   resource_id = aws_api_gateway_resource.proxy_resource.id
   http_method = aws_api_gateway_method.get_bookings.http_method
-  status_code = "200"
+  status_code = 200
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+  }
 }
 
 resource "aws_api_gateway_method" "create_booking" {

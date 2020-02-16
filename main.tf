@@ -14,7 +14,7 @@ module "frontend" {
     source = "./frontend"
 
     site_url            = var.site_url
-    api_invoke_url      = module.backend.base_url
+    api_invoke_url      = "${module.backend.base_url}/${module.backend.resource_path}"
     userPoolId          = module.backend.cognito_pool_id
     userPoolWebClientId = module.backend.frontent_client_id
 }
